@@ -1,5 +1,5 @@
-function PXLCore() {}
+function pxlCore() {}
 
-PXLCore.prototype =
+pxlCore.prototype =
 {
 };
