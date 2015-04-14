@@ -1,0 +1,14 @@
+{
+  "devDependencies":
+  {
+    "gulp": "*",
+    "gulp-compass": "*",
+    "gulp-jshint": "*",
+    "jshint-stylish": "*",
+    "gulp-uglify": "*",
+    "gulp-util": "*",
+    "gulp-concat": "*",
+    "gulp-minify-css": "*",
+    "gulp-rename": "*"
+  }
+}
