@@ -10,12 +10,35 @@ function pxlCore_Notification($pxl)
 
 pxlCore_Notification.prototype =
 {
+	current_engine: null,
+
 	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
 			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
 		}
+	},
+
+	prepare: function(options)
+	{
+		if ( options.title
+	},
+
+	show_success: function(options)
+	{
+	},
+
+	show_info: function(options)
+	{
+	},
+
+	show_warning: function(options)
+	{
+	},
+
+	show_error: function(options)
+	{
 	}
 };
 /**
@@ -39,22 +62,22 @@ pxlCore_Dialog.prototype =
 	}
 };
 /**
- * pxlCore/AJAX
+ * pxlCore/Ajax
  * @param {string} $pxl - The pxlCore object reference.
  * @constructor
  */
-function pxlCore_AJAX($pxl)
+function pxlCore_Ajax($pxl)
 {
 	this.init($pxl);
 }
 
-pxlCore_AJAX.prototype =
+pxlCore_Ajax.prototype =
 {
 	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/AJAX ~', '#CCC', 'black');
+			$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
 		}
 	}
 };
@@ -93,7 +116,11 @@ pxlCore.prototype =
 
 	options:
 	{
-		debug: false
+		debug: false,
+		notification:
+		{
+			engines: []
+		}
 	},
 
 	framework: null,
@@ -123,8 +150,8 @@ pxlCore.prototype =
 		// UI
 		self.ui = new pxlCore_UI(self);
 
-		// AJAX
-		self.ajax = new pxlCore_AJAX(self);
+		// Ajax
+		self.ajax = new pxlCore_Ajax(self);
 
 		// Dialog
 		self.dialog = new pxlCore_Dialog(self);

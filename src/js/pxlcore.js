@@ -13,7 +13,11 @@ pxlCore.prototype =
 
 	options:
 	{
-		debug: false
+		debug: false,
+		notification:
+		{
+			engines: []
+		}
 	},
 
 	framework: null,
@@ -43,8 +47,8 @@ pxlCore.prototype =
 		// UI
 		self.ui = new pxlCore_UI(self);
 
-		// AJAX
-		self.ajax = new pxlCore_AJAX(self);
+		// Ajax
+		self.ajax = new pxlCore_Ajax(self);
 
 		// Dialog
 		self.dialog = new pxlCore_Dialog(self);
@@ -78,6 +82,11 @@ pxlCore.prototype =
 		}
 
 		console.log('%c' + text, (style !== '' ? style : null));
+	},
+
+	error: function(text)
+	{
+		self.log(text, 'red', 'black');
 	},
 
 	extend: function (defaults, options)
