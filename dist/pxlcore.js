@@ -1,56 +1,60 @@
-function pxlCore_Notification()
+function pxlCore_Notification($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_Notification.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: Notification ~', 'black', 'white');
+			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
 		}
 	}
 };
-function pxlCore_Dialog()
+function pxlCore_Dialog($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_Dialog.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: Dialog ~', 'black', 'white');
+			$pxl.log('~ pxlCore/Dialog ~', '#CCC', 'black');
 		}
 	}
 };
-function pxlCore_AJAX()
+function pxlCore_AJAX($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_AJAX.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: AJAX ~', 'black', 'white');
+			$pxl.log('~ pxlCore/AJAX ~', '#CCC', 'black');
 		}
 	}
 };
-function pxlCore_UI()
+function pxlCore_UI($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_UI.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: UI ~', 'black', 'white');
+			$pxl.log('~ pxlCore/UI ~', '#CCC', 'black');
 		}
 	}
 };
@@ -79,28 +83,28 @@ pxlCore.prototype =
 
 		if ( typeof options === 'object' )
 		{
-			self.options = $.extend(self.options, options);
+			self.options = self.extend(self.options, options);
 		}
 
 		// Detect pxlFramework
 		self.detectPXLFramework();
 
-		if ( self.debug === true )
+		if ( self.options.debug === true )
 		{
 			self.log('~ pxlCore ~', 'black', 'white');
 		}
 
 		// UI
-		self.ui = new pxlCore_UI();
+		self.ui = new pxlCore_UI(self);
 
 		// AJAX
-		self.ajax = new pxlCore_AJAX();
+		self.ajax = new pxlCore_AJAX(self);
 
 		// Dialog
-		self.dialog = new pxlCore_Dialog();
+		self.dialog = new pxlCore_Dialog(self);
 
 		// Notification
-		self.notification = new pxlCore_Notification();
+		self.notification = new pxlCore_Notification(self);
 	},
 
 	detectPXLFramework: function()
@@ -110,8 +114,6 @@ pxlCore.prototype =
 		if ( typeof pxl === 'object' )
 		{
 			self.framework = pxl;
-
-			self.debug = self.framework.debug;
 		}
 	},
 
@@ -130,5 +132,29 @@ pxlCore.prototype =
 		}
 
 		console.log('%c' + text, (style !== '' ? style : null));
+	},
+
+	extend: function (defaults, options)
+	{
+	    var extended = {},
+	        key;
+
+	    for ( key in defaults )
+	    {
+	        if ( Object.prototype.hasOwnProperty.call(defaults, key) )
+	        {
+	            extended[key] = defaults[key];
+	        }
+	    }
+
+	    for ( key in options )
+	    {
+	        if ( Object.prototype.hasOwnProperty.call(options, key) )
+	        {
+	            extended[key] = options[key];
+	        }
+	    }
+
+	    return extended;
 	}
 };
