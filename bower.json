@@ -1,7 +1,7 @@
 {
   "name": "PXLCore",
-  "version": "1.0.1",
-  "homepage": "https://github.com/PXLbros/PXLCore",
+  "version": "1.0.2",
+  "homepage": "https://github.com/PXLbros/pxlCore",
   "main": "pxlcore.js",
   "ignore":
   [

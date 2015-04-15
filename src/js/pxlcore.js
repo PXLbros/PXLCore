@@ -59,6 +59,7 @@ pxlCore.prototype =
 		}
 	},
 
+	// Log
 	log: function(text, background_color, color)
 	{
 		var style = '';
