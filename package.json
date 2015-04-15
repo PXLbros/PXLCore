@@ -10,6 +10,7 @@
     "gulp-util": "*",
     "gulp-concat": "*",
     "gulp-minify-css": "*",
-    "gulp-rename": "*"
+    "gulp-rename": "*",
+    "gulp-jsdoc": "*"
   }
 }

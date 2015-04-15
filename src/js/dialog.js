@@ -1,3 +1,8 @@
+/**
+ * pxlCore/Dialog
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
 function pxlCore_Dialog($pxl)
 {
 	this.init($pxl);

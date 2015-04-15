@@ -6,12 +6,14 @@ var gulp = require('gulp'),
 	util = require('gulp-util'),
 	concat = require('gulp-concat'),
 	minifyCSS = require('gulp-minify-css'),
-	rename = require('gulp-rename');
+	rename = require('gulp-rename'),
+	jsdoc = require('gulp-jsdoc');
 
 var SRC_DIR = 'src/',
 	JS_DIR = SRC_DIR + 'js/',
 	SASS_DIR = SRC_DIR + 'sass/',
-	DIST_DIR = 'dist/';
+	DIST_DIR = 'dist/',
+	DOCS_DIR = 'docs/';
 
 gulp.task('compass', function()
 {
@@ -63,6 +65,12 @@ gulp.task('concat', function()
 		.pipe(gulp.dest(DIST_DIR));
 });
 
+gulp.task('jsdoc', function()
+{
+	gulp.src(DIST_DIR + 'pxlcore.js')
+        .pipe(jsdoc(DOCS_DIR))
+});
+
 gulp.task('uglify', function()
 {
 	return gulp.src(DIST_DIR + 'pxlcore.js')
@@ -78,6 +86,7 @@ gulp.task('watch', function()
 {
 	gulp.watch(SASS_DIR + '**/*.scss', ['compass', 'minify-css']);
 	gulp.watch(JS_DIR + '**/*.js', ['lint', 'concat', 'uglify']);
+	gulp.watch(DIST_DIR + 'pxlcore.js', ['jsdoc']);
 });
 
-gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'uglify', 'watch']);
+gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'jsdoc', 'uglify', 'watch']);

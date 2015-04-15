@@ -1,3 +1,8 @@
+/**
+ * pxlCore/AJAX
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
 function pxlCore_AJAX($pxl)
 {
 	this.init($pxl);

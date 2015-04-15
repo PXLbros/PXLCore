@@ -1,3 +1,8 @@
+/**
+ * pxlCore/UI
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
 function pxlCore_UI($pxl)
 {
 	this.init($pxl);

@@ -1,3 +1,8 @@
+/**
+ * pxlCore/Notification
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
 function pxlCore_Notification($pxl)
 {
 	this.init($pxl);

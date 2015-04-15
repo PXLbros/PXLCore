@@ -1,3 +1,7 @@
+/**
+ * pxlCore
+ * @constructor
+ */
 function pxlCore(options)
 {
 	this.init(options);
@@ -5,6 +9,8 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
+	version: '1.0.7',
+
 	options:
 	{
 		debug: false
