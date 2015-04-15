@@ -1,6 +1,6 @@
-function pxlCore()
+function pxlCore(options)
 {
-	this.init();
+	this.init(options);
 }
 
 pxlCore.prototype =

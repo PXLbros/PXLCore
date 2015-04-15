@@ -58,9 +58,9 @@ pxlCore_UI.prototype =
 		}
 	}
 };
-function pxlCore()
+function pxlCore(options)
 {
-	this.init();
+	this.init(options);
 }
 
 pxlCore.prototype =
@@ -95,16 +95,16 @@ pxlCore.prototype =
 		}
 
 		// UI
-		self.ui = new pxlCore_UI(self);
+		self.ui = new pxlCore_UI();
 
 		// AJAX
-		self.ajax = new pxlCore_AJAX(self);
+		self.ajax = new pxlCore_AJAX();
 
 		// Dialog
-		self.dialog = new pxlCore_Dialog(self);
+		self.dialog = new pxlCore_Dialog();
 
 		// Notification
-		self.notification = new pxlCore_Notification(self);
+		self.notification = new pxlCore_Notification();
 	},
 
 	detectPXLFramework: function()
