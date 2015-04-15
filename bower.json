@@ -1,6 +1,6 @@
 {
-  "name": "PXLCore",
-  "version": "1.0.2",
+  "name": "pxlCore",
+  "version": "1.0.3",
   "homepage": "https://github.com/PXLbros/pxlCore",
   "main": "pxlcore.js",
   "ignore":
