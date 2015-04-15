@@ -35,16 +35,16 @@ pxlCore.prototype =
 		}
 
 		// UI
-		self.ui = new pxlCore_UI();
+		self.ui = new pxlCore_UI(self);
 
 		// AJAX
-		self.ajax = new pxlCore_AJAX();
+		self.ajax = new pxlCore_AJAX(self);
 
 		// Dialog
-		self.dialog = new pxlCore_Dialog();
+		self.dialog = new pxlCore_Dialog(self);
 
 		// Notification
-		self.notification = new pxlCore_Notification();
+		self.notification = new pxlCore_Notification(self);
 	},
 
 	detectPXLFramework: function()
