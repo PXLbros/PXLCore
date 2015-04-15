@@ -1,14 +1,15 @@
-function pxlCore_UI()
+function pxlCore_UI($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_UI.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: UI ~', 'black', 'white');
+			$pxl.log('~ pxlCore/UI ~', '#CCC', 'black');
 		}
 	}
 };

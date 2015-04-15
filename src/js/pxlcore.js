@@ -23,13 +23,13 @@ pxlCore.prototype =
 
 		if ( typeof options === 'object' )
 		{
-			self.options = $.extend(self.options, options);
+			self.options = self.extend(self.options, options);
 		}
 
 		// Detect pxlFramework
 		self.detectPXLFramework();
 
-		if ( self.debug === true )
+		if ( self.options.debug === true )
 		{
 			self.log('~ pxlCore ~', 'black', 'white');
 		}
@@ -54,12 +54,9 @@ pxlCore.prototype =
 		if ( typeof pxl === 'object' )
 		{
 			self.framework = pxl;
-
-			self.debug = self.framework.debug;
 		}
 	},
 
-	// Log
 	log: function(text, background_color, color)
 	{
 		var style = '';
@@ -75,5 +72,29 @@ pxlCore.prototype =
 		}
 
 		console.log('%c' + text, (style !== '' ? style : null));
+	},
+
+	extend: function (defaults, options)
+	{
+	    var extended = {},
+	        key;
+
+	    for ( key in defaults )
+	    {
+	        if ( Object.prototype.hasOwnProperty.call(defaults, key) )
+	        {
+	            extended[key] = defaults[key];
+	        }
+	    }
+
+	    for ( key in options )
+	    {
+	        if ( Object.prototype.hasOwnProperty.call(options, key) )
+	        {
+	            extended[key] = options[key];
+	        }
+	    }
+
+	    return extended;
 	}
 };

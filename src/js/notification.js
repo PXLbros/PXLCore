@@ -1,14 +1,15 @@
-function pxlCore_Notification()
+function pxlCore_Notification($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_Notification.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: Notification ~', 'black', 'white');
+			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
 		}
 	}
 };

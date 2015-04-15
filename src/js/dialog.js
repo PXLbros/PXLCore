@@ -1,14 +1,15 @@
-function pxlCore_Dialog()
+function pxlCore_Dialog($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_Dialog.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: Dialog ~', 'black', 'white');
+			$pxl.log('~ pxlCore/Dialog ~', '#CCC', 'black');
 		}
 	}
 };

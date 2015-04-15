@@ -1,14 +1,15 @@
-function pxlCore_AJAX()
+function pxlCore_AJAX($pxl)
 {
+	this.init($pxl);
 }
 
 pxlCore_AJAX.prototype =
 {
-	init: function()
+	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore: AJAX ~', 'black', 'white');
+			$pxl.log('~ pxlCore/AJAX ~', '#CCC', 'black');
 		}
 	}
 };
