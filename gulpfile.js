@@ -55,8 +55,12 @@ gulp.task('concat', function()
 {
 	return gulp.src(
 		[
+			JS_DIR + 'notification/engines/sweetalert.js',
+			JS_DIR + 'notification/engines/notiny.js',
+			JS_DIR + 'notification/engine.js',
 			JS_DIR + 'notification.js',
 			JS_DIR + 'dialog.js',
+			JS_DIR + 'ajax/request.js',
 			JS_DIR + 'ajax.js',
 			JS_DIR + 'ui.js',
 			JS_DIR + 'pxlcore.js'
@@ -86,7 +90,7 @@ gulp.task('watch', function()
 {
 	gulp.watch(SASS_DIR + '**/*.scss', ['compass', 'minify-css']);
 	gulp.watch(JS_DIR + '**/*.js', ['lint', 'concat', 'uglify']);
-	gulp.watch(DIST_DIR + 'pxlcore.js', ['jsdoc']);
+	//gulp.watch(DIST_DIR + 'pxlcore.js', ['jsdoc']);
 });
 
-gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'jsdoc', 'uglify', 'watch']);
+gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', /*'jsdoc', */'uglify', 'watch']);
