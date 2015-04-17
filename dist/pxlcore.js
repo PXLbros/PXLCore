@@ -241,7 +241,7 @@ pxlCore_Ajax.prototype =
 
 	get: function(url, data, callbacks, extra)
 	{
-		var request = new Core_Ajax_Request();
+		var request = new pxlCore_Ajax_Request();
 		request.method = 'GET';
 		request.url = url;
 		request.data = data;
@@ -297,7 +297,7 @@ pxlCore_Ajax.prototype =
 
 	post: function(url, data, callbacks, extra)
 	{
-		var request = new Core_Ajax_Request();
+		var request = new pxlCore_Ajax_Request();
 		request.method = 'POST';
 		request.url = url;
 		request.data = data;
