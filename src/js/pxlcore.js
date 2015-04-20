@@ -101,7 +101,7 @@ pxlCore.prototype =
 
 	error: function(text)
 	{
-		self.log(text, 'red', 'black');
+		this.log(text, '#F00', '#FFF');
 	},
 
 	extend: function(defaults, options)

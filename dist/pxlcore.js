@@ -1,6 +1,31 @@
+/**
+ * pxlCore/Notification/Engine/SweetAlert
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Notification_Engine_SweetAlert($pxl)
+{
+	this.init($pxl);
+}
 
+pxlCore_Notification_Engine_SweetAlert.prototype =
+{
+	$pxl: null
+};
+/**
+ * pxlCore/Notification/Engine/Notiny
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Notification_Engine_Notiny($pxl)
+{
+	this.init($pxl);
+}
 
-
+pxlCore_Notification_Engine_Notiny.prototype =
+{
+	$pxl: null
+};
 /**
  * pxlCore/Notification
  * @param {string} $pxl - The pxlCore object reference.
@@ -535,7 +560,7 @@ pxlCore.prototype =
 
 	error: function(text)
 	{
-		self.log(text, 'red', 'black');
+		this.log(text, '#F00', '#FFF');
 	},
 
 	extend: function(defaults, options)
