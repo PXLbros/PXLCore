@@ -10,13 +10,19 @@ function pxlCore_Ajax($pxl)
 
 pxlCore_Ajax.prototype =
 {
+	$pxl: null,
+
 	requests: [],
 	
 	init: function($pxl)
 	{
-		if ( $pxl.options.debug === true )
+		var self = this;
+
+		self.$pxl = $pxl;
+
+		if ( self.$pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
 		}
 	},
 

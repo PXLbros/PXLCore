@@ -89,6 +89,8 @@ function pxlCore_Ajax_Request($pxl)
 
 pxlCore_Ajax_Request.prototype =
 {
+	$pxl: null,
+
 	$form: null,
 
 	url: '',
@@ -106,6 +108,18 @@ pxlCore_Ajax_Request.prototype =
 	error: null,
 	always: null,
 	abort: null,
+
+	init: function($pxl)
+	{
+		var self = this;
+
+		self.$pxl = $pxl;
+
+		if ( self.$pxl.options.debug === true )
+		{
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+		}
+	},
 
 	execute: function()
 	{
@@ -229,13 +243,19 @@ function pxlCore_Ajax($pxl)
 
 pxlCore_Ajax.prototype =
 {
+	$pxl: null,
+
 	requests: [],
 	
 	init: function($pxl)
 	{
-		if ( $pxl.options.debug === true )
+		var self = this;
+
+		self.$pxl = $pxl;
+
+		if ( self.$pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
 		}
 	},
 
