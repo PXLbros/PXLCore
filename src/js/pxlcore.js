@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.13',
+	version: '1.0.14',
 
 	options:
 	{
@@ -28,6 +28,8 @@ pxlCore.prototype =
 	notification: null,
 	uri: null,
 
+	libraries: [],
+
 	init: function(options)
 	{
 		var self = this;
@@ -42,7 +44,8 @@ pxlCore.prototype =
 
 		if ( self.options.debug === true )
 		{
-			self.log('~ pxlCore ' + self.version + ' ~', 'black', 'white');
+			self.log('~ pxlCore ~', 'black', 'white');
+			self.log('Version: ' + self.version);
 			self.log('Detected pxlFramework: ' + (self.framework !== null ? 'Yes' : 'No'));
 
 			if ( self.framework !== null )

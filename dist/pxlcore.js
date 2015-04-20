@@ -471,7 +471,8 @@ pxlCore.prototype =
 
 		if ( self.options.debug === true )
 		{
-			self.log('~ pxlCore ' + self.version + ' ~', 'black', 'white');
+			self.log('~ pxlCore ~', 'black', 'white');
+			self.log('Version: ' + self.version);
 			self.log('Detected pxlFramework: ' + (self.framework !== null ? 'Yes' : 'No'));
 
 			if ( self.framework !== null )
@@ -496,6 +497,8 @@ pxlCore.prototype =
 
 		// URI
 		self.uri = new pxlCore_URI(self);
+
+		if ( $fn.api
 	},
 
 	detectPXLFramework: function()
