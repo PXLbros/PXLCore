@@ -125,28 +125,28 @@ pxlCore_Ajax_Request.prototype =
 	{
 		var inst = this;
 
-		if ( $core.isUndefined(inst.url) )
+		if ( $pxl.isUndefined(inst.url) )
 		{
-			$core.log('Missing AJAX URL.');
+			$pxl.log('Missing AJAX URL.');
 
 			return;
 		}
 
-		if ( !$core.isUndefined($core.ajax.requests[inst.url]) )
+		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) )
 		{
-			$core.ajax.requests[inst.url].abort();
+			$pxl.ajax.requests[inst.url].abort();
 		}
 
-		var file_upload = ($core.isDefined(inst.file_upload) && inst.file_upload === true);
+		var file_upload = ($pxl.isDefined(inst.file_upload) && inst.file_upload === true);
 
-		var headers = { 'X-XSRF-TOKEN': $core.options.csrf_token };
+		var headers = { 'X-XSRF-TOKEN': $pxl.framework.csrf_token };
 
-		if ( file_upload === true && $core.isObject(inst.file_upload_data) )
+		if ( file_upload === true && $pxl.isObject(inst.file_upload_data) )
 		{
 			headers = $.extend(headers, inst.file_upload_data);
 		}
 
-		$core.ajax.requests[inst.url] = $.ajax(
+		$pxl.ajax.requests[inst.url] = $.ajax(
 		{
 			type: inst.method,
 			url: inst.url,
@@ -161,7 +161,7 @@ pxlCore_Ajax_Request.prototype =
 			{
 				var xhr = $.ajaxSettings.xhr();
 
-				if ( $core.isFunction(inst.progress) )
+				if ( $pxl.isFunction(inst.progress) )
 				{
 					xhr.upload.onprogress = function(e)
 					{
@@ -175,14 +175,14 @@ pxlCore_Ajax_Request.prototype =
 			},
 			beforeSend: function(xhr, data)
 			{
-				if ( $core.isFunction(inst.before) )
+				if ( $pxl.isFunction(inst.before) )
 				{
 					inst.before(xhr, data);
 				}
 			}
 		}).done(function(result)
 		{
-			if ( $core.isFunction(inst.success) )
+			if ( $pxl.isFunction(inst.success) )
 			{
 				inst.success(result);
 			}
@@ -191,39 +191,39 @@ pxlCore_Ajax_Request.prototype =
 			{
 				if ( typeof result.message.type === 'number' && typeof result.message.text === 'string' )
 				{
-					$core.ui.message.engine.show(result.message.type, result.message.text);
+					$pxl.ui.message.engine.show(result.message.type, result.message.text);
 				}
 			}
 
-			if ( !$core.isUndefined(result.redirect) )
+			if ( !$pxl.isUndefined(result.redirect) )
 			{
 				setTimeout(function()
 				{
-					return $core.uri.redirect(result.redirect.url);
+					return $pxl.uri.redirect(result.redirect.url);
 				}, result.redirect.delay);
 			}
 
 			inst.result = result;
 		}).always(function(result)
 		{
-			if ( $core.isFunction(inst.always) )
+			if ( $pxl.isFunction(inst.always) )
 			{
 				inst.always(result);
 			}
 
-			delete $core.ajax.requests[inst.url];
+			delete $pxl.ajax.requests[inst.url];
 		}).fail(function(xhr, textStatus, errorThrown)
 		{
 			if ( xhr === 'abort' )
 			{
-				if ( $core.isFunction(inst.abort) )
+				if ( $pxl.isFunction(inst.abort) )
 				{
 					inst.abort();
 				}
 			}
 			else
 			{
-				if ( $core.isFunction(inst.error) )
+				if ( $pxl.isFunction(inst.error) )
 				{
 					inst.error(errorThrown);
 				}
@@ -246,7 +246,7 @@ pxlCore_Ajax.prototype =
 	$pxl: null,
 
 	requests: [],
-	
+
 	init: function($pxl)
 	{
 		var self = this;
@@ -261,47 +261,49 @@ pxlCore_Ajax.prototype =
 
 	get: function(url, data, callbacks, extra)
 	{
-		var request = new pxlCore_Ajax_Request();
+		var self = this;
+
+		var request = new pxlCore_Ajax_Request(self.$pxl);
 		request.method = 'GET';
 		request.url = url;
 		request.data = data;
 
-		if ( $pxl.isUndefined(callbacks) )
+		if ( self.$pxl.isUndefined(callbacks) )
 		{
 			callbacks = {};
 		}
 
-		if ( $pxl.isFunction(callbacks.before) )
+		if ( self.$pxl.isFunction(callbacks.before) )
 		{
 			request.before = callbacks.before;
 		}
 
-		if ( $pxl.isFunction(callbacks.progress) )
+		if ( self.$pxl.isFunction(callbacks.progress) )
 		{
 			request.progress = callbacks.progress;
 		}
 
-		if ( $pxl.isFunction(callbacks.success) )
+		if ( self.$pxl.isFunction(callbacks.success) )
 		{
 			request.success = callbacks.success;
 		}
 
-		if ( $pxl.isFunction(callbacks.error) )
+		if ( self.$pxl.isFunction(callbacks.error) )
 		{
 			request.error = callbacks.error;
 		}
 
-		if ( $pxl.isFunction(callbacks.always) )
+		if ( self.$pxl.isFunction(callbacks.always) )
 		{
 			request.always = callbacks.always;
 		}
 
-		if ( $pxl.isFunction(callbacks.abort) )
+		if ( self.$pxl.isFunction(callbacks.abort) )
 		{
 			request.abort = callbacks.abort;
 		}
 
-		if ( $pxl.isObject(extra) )
+		if ( self.$pxl.isObject(extra) )
 		{
 			for ( var key in extra )
 			{
@@ -317,47 +319,49 @@ pxlCore_Ajax.prototype =
 
 	post: function(url, data, callbacks, extra)
 	{
-		var request = new pxlCore_Ajax_Request();
+		var self = this;
+
+		var request = new pxlCore_Ajax_Request(self.$pxl);
 		request.method = 'POST';
 		request.url = url;
 		request.data = data;
 
-		if ( $pxl.isUndefined(callbacks) )
+		if ( self.$pxl.isUndefined(callbacks) )
 		{
 			callbacks = {};
 		}
 
-		if ( $pxl.isFunction(callbacks.before) )
+		if ( self.$pxl.isFunction(callbacks.before) )
 		{
 			request.before = callbacks.before;
 		}
 
-		if ( $pxl.isFunction(callbacks.progress) )
+		if ( self.$pxl.isFunction(callbacks.progress) )
 		{
 			request.progress = callbacks.progress;
 		}
 
-		if ( $pxl.isFunction(callbacks.success) )
+		if (self. $pxl.isFunction(callbacks.success) )
 		{
 			request.success = callbacks.success;
 		}
 
-		if ( $pxl.isFunction(callbacks.error) )
+		if ( self.$pxl.isFunction(callbacks.error) )
 		{
 			request.error = callbacks.error;
 		}
 
-		if ( $pxl.isFunction(callbacks.always) )
+		if ( self.$pxl.isFunction(callbacks.always) )
 		{
 			request.always = callbacks.always;
 		}
 
-		if ( $pxl.isFunction(callbacks.abort) )
+		if ( self.$pxl.isFunction(callbacks.abort) )
 		{
 			request.abort = callbacks.abort;
 		}
 
-		if ( $pxl.isObject(extra) )
+		if ( self.$pxl.isObject(extra) )
 		{
 			for ( var key in extra )
 			{
@@ -402,7 +406,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.7',
+	version: '1.0.12',
 
 	options:
 	{
@@ -419,6 +423,7 @@ pxlCore.prototype =
 	ajax: null,
 	dialog: null,
 	notification: null,
+	uri: null,
 
 	init: function(options)
 	{
@@ -434,7 +439,15 @@ pxlCore.prototype =
 
 		if ( self.options.debug === true )
 		{
-			self.log('~ pxlCore ~', 'black', 'white');
+			self.log('~ pxlCore ' + self.version + ' ~', 'black', 'white');
+			self.log('Detected pxlFramework: ' + (self.framework !== null ? 'Yes' : 'No'));
+
+			if ( self.framework !== null )
+			{
+				self.log('Current Page: ' + self.framework.current_page);
+				self.log('Page ID: ' + self.framework.page_id);
+				self.log('Base URL: ' + self.framework.base_url);
+			}
 		}
 
 		// UI
@@ -448,6 +461,9 @@ pxlCore.prototype =
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);
+
+		// URI
+		self.uri = new pxlCore_URI(self);
 	},
 
 	detectPXLFramework: function()
@@ -504,5 +520,30 @@ pxlCore.prototype =
 	    }
 
 	    return extended;
+	},
+
+	isUndefined: function(object)
+	{
+		return object == void 0;
+	},
+
+	isDefined: function(object)
+	{
+		return !this.isUndefined(object);
+	},
+
+	isFunction: function(object)
+	{
+		return (typeof object === 'function');
+	},
+
+	isObject: function(object)
+	{
+		return object === Object(object);
+	},
+
+	redirect: function(url, with_base_url)
+	{
+		window.location = (typeof with_base_url === 'boolean' ? this.uri.urlize(url) : url);
 	}
 };

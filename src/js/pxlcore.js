@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.7',
+	version: '1.0.12',
 
 	options:
 	{
@@ -26,6 +26,7 @@ pxlCore.prototype =
 	ajax: null,
 	dialog: null,
 	notification: null,
+	uri: null,
 
 	init: function(options)
 	{
@@ -41,7 +42,15 @@ pxlCore.prototype =
 
 		if ( self.options.debug === true )
 		{
-			self.log('~ pxlCore ~', 'black', 'white');
+			self.log('~ pxlCore ' + self.version + ' ~', 'black', 'white');
+			self.log('Detected pxlFramework: ' + (self.framework !== null ? 'Yes' : 'No'));
+
+			if ( self.framework !== null )
+			{
+				self.log('Current Page: ' + self.framework.current_page);
+				self.log('Page ID: ' + self.framework.page_id);
+				self.log('Base URL: ' + self.framework.base_url);
+			}
 		}
 
 		// UI
@@ -55,6 +64,9 @@ pxlCore.prototype =
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);
+
+		// URI
+		self.uri = new pxlCore_URI(self);
 	},
 
 	detectPXLFramework: function()
@@ -111,5 +123,30 @@ pxlCore.prototype =
 	    }
 
 	    return extended;
+	},
+
+	isUndefined: function(object)
+	{
+		return object == void 0;
+	},
+
+	isDefined: function(object)
+	{
+		return !this.isUndefined(object);
+	},
+
+	isFunction: function(object)
+	{
+		return (typeof object === 'function');
+	},
+
+	isObject: function(object)
+	{
+		return object === Object(object);
+	},
+
+	redirect: function(url, with_base_url)
+	{
+		window.location = (typeof with_base_url === 'boolean' ? this.uri.urlize(url) : url);
 	}
 };

@@ -13,7 +13,7 @@ pxlCore_Ajax.prototype =
 	$pxl: null,
 
 	requests: [],
-	
+
 	init: function($pxl)
 	{
 		var self = this;
@@ -28,47 +28,49 @@ pxlCore_Ajax.prototype =
 
 	get: function(url, data, callbacks, extra)
 	{
-		var request = new pxlCore_Ajax_Request();
+		var self = this;
+
+		var request = new pxlCore_Ajax_Request(self.$pxl);
 		request.method = 'GET';
 		request.url = url;
 		request.data = data;
 
-		if ( $pxl.isUndefined(callbacks) )
+		if ( self.$pxl.isUndefined(callbacks) )
 		{
 			callbacks = {};
 		}
 
-		if ( $pxl.isFunction(callbacks.before) )
+		if ( self.$pxl.isFunction(callbacks.before) )
 		{
 			request.before = callbacks.before;
 		}
 
-		if ( $pxl.isFunction(callbacks.progress) )
+		if ( self.$pxl.isFunction(callbacks.progress) )
 		{
 			request.progress = callbacks.progress;
 		}
 
-		if ( $pxl.isFunction(callbacks.success) )
+		if ( self.$pxl.isFunction(callbacks.success) )
 		{
 			request.success = callbacks.success;
 		}
 
-		if ( $pxl.isFunction(callbacks.error) )
+		if ( self.$pxl.isFunction(callbacks.error) )
 		{
 			request.error = callbacks.error;
 		}
 
-		if ( $pxl.isFunction(callbacks.always) )
+		if ( self.$pxl.isFunction(callbacks.always) )
 		{
 			request.always = callbacks.always;
 		}
 
-		if ( $pxl.isFunction(callbacks.abort) )
+		if ( self.$pxl.isFunction(callbacks.abort) )
 		{
 			request.abort = callbacks.abort;
 		}
 
-		if ( $pxl.isObject(extra) )
+		if ( self.$pxl.isObject(extra) )
 		{
 			for ( var key in extra )
 			{
@@ -84,47 +86,49 @@ pxlCore_Ajax.prototype =
 
 	post: function(url, data, callbacks, extra)
 	{
-		var request = new pxlCore_Ajax_Request();
+		var self = this;
+
+		var request = new pxlCore_Ajax_Request(self.$pxl);
 		request.method = 'POST';
 		request.url = url;
 		request.data = data;
 
-		if ( $pxl.isUndefined(callbacks) )
+		if ( self.$pxl.isUndefined(callbacks) )
 		{
 			callbacks = {};
 		}
 
-		if ( $pxl.isFunction(callbacks.before) )
+		if ( self.$pxl.isFunction(callbacks.before) )
 		{
 			request.before = callbacks.before;
 		}
 
-		if ( $pxl.isFunction(callbacks.progress) )
+		if ( self.$pxl.isFunction(callbacks.progress) )
 		{
 			request.progress = callbacks.progress;
 		}
 
-		if ( $pxl.isFunction(callbacks.success) )
+		if (self. $pxl.isFunction(callbacks.success) )
 		{
 			request.success = callbacks.success;
 		}
 
-		if ( $pxl.isFunction(callbacks.error) )
+		if ( self.$pxl.isFunction(callbacks.error) )
 		{
 			request.error = callbacks.error;
 		}
 
-		if ( $pxl.isFunction(callbacks.always) )
+		if ( self.$pxl.isFunction(callbacks.always) )
 		{
 			request.always = callbacks.always;
 		}
 
-		if ( $pxl.isFunction(callbacks.abort) )
+		if ( self.$pxl.isFunction(callbacks.abort) )
 		{
 			request.abort = callbacks.abort;
 		}
 
-		if ( $pxl.isObject(extra) )
+		if ( self.$pxl.isObject(extra) )
 		{
 			for ( var key in extra )
 			{
