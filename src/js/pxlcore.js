@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.12',
+	version: '1.0.13',
 
 	options:
 	{
@@ -101,7 +101,7 @@ pxlCore.prototype =
 		self.log(text, 'red', 'black');
 	},
 
-	extend: function (defaults, options)
+	extend: function(defaults, options)
 	{
 	    var extended = {},
 	        key;

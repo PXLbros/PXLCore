@@ -396,6 +396,38 @@ pxlCore_UI.prototype =
 	}
 };
 /**
+ * pxlCore/UI
+ * @param {string} $pxl - The pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_URI($pxl)
+{
+	this.init($pxl);
+}
+
+pxlCore_URI.prototype =
+{
+	init: function($pxl)
+	{
+		if ( $pxl.options.debug === true )
+		{
+			$pxl.log('~ pxlCore/URI ~', '#CCC', 'black');
+		}
+	},
+
+	urlize: function(url)
+	{
+		if ( $pxl.isUndefined($pxl.framework.base_url) )
+		{
+			$pxl.log('Base URL not set.');
+
+			return;
+		}
+
+		return $pxl.framework.base_url + url;
+	}
+};
+/**
  * pxlCore
  * @constructor
  */
@@ -406,7 +438,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.12',
+	version: '1.0.13',
 
 	options:
 	{
@@ -498,7 +530,7 @@ pxlCore.prototype =
 		self.log(text, 'red', 'black');
 	},
 
-	extend: function (defaults, options)
+	extend: function(defaults, options)
 	{
 	    var extended = {},
 	        key;

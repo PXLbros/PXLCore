@@ -63,6 +63,7 @@ gulp.task('concat', function()
 			JS_DIR + 'ajax/request.js',
 			JS_DIR + 'ajax.js',
 			JS_DIR + 'ui.js',
+			JS_DIR + 'uri.js',
 			JS_DIR + 'pxlcore.js'
 		])
 		.pipe(concat('pxlcore.js'))
