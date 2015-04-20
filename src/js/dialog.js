@@ -16,5 +16,10 @@ pxlCore_Dialog.prototype =
 		{
 			$pxl.log('~ pxlCore/Dialog ~', '#CCC', 'black');
 		}
+	},
+
+	init_from_element: function(selector, options)
+	{
+		console.log('init from element');
 	}
 };

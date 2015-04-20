@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.14',
+	version: '1.0.15',
 
 	options:
 	{

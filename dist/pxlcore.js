@@ -75,6 +75,11 @@ pxlCore_Dialog.prototype =
 		{
 			$pxl.log('~ pxlCore/Dialog ~', '#CCC', 'black');
 		}
+	},
+
+	init_from_element: function(selector, options)
+	{
+		console.log('init from element');
 	}
 };
 /**
@@ -438,7 +443,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.13',
+	version: '1.0.15',
 
 	options:
 	{
@@ -456,6 +461,8 @@ pxlCore.prototype =
 	dialog: null,
 	notification: null,
 	uri: null,
+
+	libraries: [],
 
 	init: function(options)
 	{
@@ -497,8 +504,6 @@ pxlCore.prototype =
 
 		// URI
 		self.uri = new pxlCore_URI(self);
-
-		if ( $fn.api
 	},
 
 	detectPXLFramework: function()
