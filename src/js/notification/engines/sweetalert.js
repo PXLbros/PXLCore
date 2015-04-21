@@ -10,5 +10,17 @@ function pxlCore_Notification_Engine_SweetAlert($pxl)
 
 pxlCore_Notification_Engine_SweetAlert.prototype =
 {
-	$pxl: null
+	$pxl: null,
+
+	init: function($pxl)
+	{
+		var self = this;
+
+		self.$pxl = $pxl;
+	},
+
+	showSuccess: function(options)
+	{
+		alert('hello sweetalert');
+	}
 };

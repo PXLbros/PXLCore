@@ -15,3 +15,5 @@
 ### pxlCore/Dialog
 
 ### pxlCore/Notification
+
+### pxlCore/URI
