@@ -5,7 +5,7 @@
  */
 function pxlCore_Notification_Engine_SweetAlert($pxl)
 {
-	this.init($pxl);
+	this.loaded = this.init($pxl);
 }
 
 pxlCore_Notification_Engine_SweetAlert.prototype =
@@ -16,7 +16,14 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 	{
 		var self = this;
 
+		if ( typeof sweetAlert !== 'object' )
+		{
+			return false;
+		}
+
 		self.$pxl = $pxl;
+
+		return true;
 	},
 
 	showSuccess: function(options)
@@ -31,23 +38,48 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
  */
 function pxlCore_Notification_Engine_Notiny($pxl)
 {
-	this.init($pxl);
+	this.loaded = this.init($pxl);
 }
 
 pxlCore_Notification_Engine_Notiny.prototype =
 {
 	$pxl: null,
 
+	options:
+	{
+		position: 'right-top',
+		width: 'auto'
+	},
+
 	init: function($pxl)
 	{
 		var self = this;
 
+		if ( typeof $.notiny !== 'function' )
+		{
+			return false;
+		}
+
 		self.$pxl = $pxl;
+
+		return true;
 	},
 
 	showSuccess: function(options)
 	{
 		alert('hello notiny');
+	},
+
+	showError: function(options)
+	{
+		var self = this;
+
+		$.notiny(
+		{
+			text: options.message,
+			position: self.options.position,
+			width: self.options.width
+		});
 	}
 };
 /**
@@ -63,12 +95,17 @@ function pxlCore_Notification($pxl)
 pxlCore_Notification.prototype =
 {
 	engines: [],
-	default_engine: null,
-	current_engine: null,
+	default_engine_id: null,
+	current_engine_id: null,
 
 	init: function($pxl)
 	{
 		var self = this;
+
+		if ( $pxl.options.debug === true )
+		{
+			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
+		}
 
 		var engine_index,
 			engine_id,
@@ -81,32 +118,39 @@ pxlCore_Notification.prototype =
 			engine_name = 'pxlCore_Notification_Engine_' + engine_id;
 			engine = new window[engine_name]($pxl);
 
+			if ( engine.loaded === false )
+			{
+				$pxl.error('Could not load notification engine "' + engine_id + '".');
+
+				continue;
+			}
+
 			self.engines[engine_id] = engine;
 
-			if ( engine_index === 0 )
+			if ( (engine_index === 0) || (engine_index > 0 && self.default_engine_id === null) )
 			{
-				self.default_engine = engine_id;
+				self.default_engine_id = engine_id;
 			}
 		}
 
-		if ( self.default_engine !== null )
+		var num_loaded_engines = $pxl.getObjectSize(self.engines);
+
+		if ( self.default_engine_id !== null )
 		{
-			self.setEngine(self.default_engine);
+			self.setEngine(self.default_engine_id);
 		}
 
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
-
 			var loaded_engines_debug_str = 'Loaded Engines: ';
 
-			if ( num_engines > 0 )
+			if ( num_loaded_engines > 0 )
 			{
 				engine_index = 0;
 
 				for ( engine_id in self.engines )
 				{
-					loaded_engines_debug_str += engine_id + (engine_index < (num_engines - 1) ? ', ' : '');
+					loaded_engines_debug_str += engine_id + (engine_index < (num_loaded_engines - 1) ? ', ' : '');
 
 					engine_index++;
 				}
@@ -118,22 +162,22 @@ pxlCore_Notification.prototype =
 
 			$pxl.log(loaded_engines_debug_str);
 
-			$pxl.log('Default Engine: ' + (self.default_engine !== null ? self.default_engine : '/'));
+			$pxl.log('Default Engine: ' + (self.default_engine_id !== null ? self.default_engine_id : '/'));
 		}
 	},
 
 	setEngine: function(engine_id)
 	{
-		this.current_engine = this.engines[engine_id];
+		this.current_engine_id = engine_id;
 	},
 
 	prepare: function(options, type)
 	{
 		var self = this;
 
-		if ( typeof options.title === 'undefined' )
+		if ( typeof options.message === 'undefined' )
 		{
-			$pxl.error('pxlCore/Notification: Missing required argument "title".');
+			$pxl.error('pxlCore/Notification: Missing required argument "message".');
 
 			return false;
 		}
@@ -150,11 +194,11 @@ pxlCore_Notification.prototype =
 			self.setEngine(options.engine);
 		}
 
-		console.log(self.current_engine);
+		var current_engine = self.engines[self.current_engine_id];
 
-		if ( typeof self.current_engine['show' + type] !== 'function' )
+		if ( typeof current_engine['show' + type] !== 'function' )
 		{
-			$pxl.error('pxlCore/Notification: Engine "' + self.current_engine + '" doesn\'t support type "' + type + '".');
+			$pxl.error('pxlCore/Notification: Engine "' + self.current_engine_id + '" doesn\'t support type "' + type + '".');
 
 			return false;
 		}
@@ -164,7 +208,7 @@ pxlCore_Notification.prototype =
 
 	finalize: function()
 	{
-		this.setEngine(this.default_engine);
+		this.setEngine(this.default_engine_id);
 	},
 
 	showSuccess: function(options)
@@ -176,21 +220,51 @@ pxlCore_Notification.prototype =
 			return;
 		}
 
-		self.current_engine.showSuccess(options);
+		self.engines[self.current_engine_id].showSuccess(options);
 
 		self.finalize();
 	},
 
 	showInfo: function(options)
 	{
+		var self = this;
+
+		if ( self.prepare(options, 'Info') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showInfo(options);
+
+		self.finalize();
 	},
 
 	showWarning: function(options)
 	{
+		var self = this;
+
+		if ( self.prepare(options, 'Warning') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showWarning(options);
+
+		self.finalize();
 	},
 
 	showError: function(options)
 	{
+		var self = this;
+
+		if ( self.prepare(options, 'Error') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showError(options);
+
+		self.finalize();
 	}
 };
 /**
@@ -579,7 +653,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.17',
+	version: '1.0.18',
 
 	options:
 	{
@@ -716,6 +790,22 @@ pxlCore.prototype =
 	isObject: function(object)
 	{
 		return object === Object(object);
+	},
+
+	getObjectSize: function(object)
+	{
+		var size = 0,
+			key;
+
+		for ( key in object )
+		{
+			if ( object.hasOwnProperty(key) )
+			{
+				size++;
+			}
+		}
+
+		return size;
 	},
 
 	redirect: function(url, with_base_url)

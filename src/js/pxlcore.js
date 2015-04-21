@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.17',
+	version: '1.0.18',
 
 	options:
 	{
@@ -146,6 +146,22 @@ pxlCore.prototype =
 	isObject: function(object)
 	{
 		return object === Object(object);
+	},
+
+	getObjectSize: function(object)
+	{
+		var size = 0,
+			key;
+
+		for ( key in object )
+		{
+			if ( object.hasOwnProperty(key) )
+			{
+				size++;
+			}
+		}
+
+		return size;
 	},
 
 	redirect: function(url, with_base_url)

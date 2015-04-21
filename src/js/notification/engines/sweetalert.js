@@ -5,7 +5,7 @@
  */
 function pxlCore_Notification_Engine_SweetAlert($pxl)
 {
-	this.init($pxl);
+	this.loaded = this.init($pxl);
 }
 
 pxlCore_Notification_Engine_SweetAlert.prototype =
@@ -16,7 +16,14 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 	{
 		var self = this;
 
+		if ( typeof sweetAlert !== 'object' )
+		{
+			return false;
+		}
+
 		self.$pxl = $pxl;
+
+		return true;
 	},
 
 	showSuccess: function(options)
