@@ -181,5 +181,41 @@ pxlCore_Notification.prototype =
 		self.engines[self.current_engine_id].showError(options);
 
 		self.finalize();
+	},
+
+	show: function(options)
+	{
+		var self = this;
+
+		if ( typeof options.type === 'undefined' )
+		{
+			$pxl.error('pxlCore/Notification: Missing required argument "type".');
+
+			return false;
+		}
+
+		if ( self.prepare(options, type) === false )
+		{
+			return;
+		}
+
+		if ( type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
+		{
+			self.engines[self.current_engine_id].showSuccess(options);
+		}
+		else if ( type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
+		{
+			self.engines[self.current_engine_id].showInfo(options);
+		}
+		else if ( type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
+		{
+			self.engines[self.current_engine_id].showWarning(options);
+		}
+		else if ( $type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
+		{
+			self.engines[self.current_engine_id].showError(options);
+		}
+
+		self.finalize();
 	}
 };

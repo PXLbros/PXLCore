@@ -265,6 +265,42 @@ pxlCore_Notification.prototype =
 		self.engines[self.current_engine_id].showError(options);
 
 		self.finalize();
+	},
+
+	show: function(options)
+	{
+		var self = this;
+
+		if ( typeof options.type === 'undefined' )
+		{
+			$pxl.error('pxlCore/Notification: Missing required argument "type".');
+
+			return false;
+		}
+
+		if ( self.prepare(options, type) === false )
+		{
+			return;
+		}
+
+		if ( type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
+		{
+			self.engines[self.current_engine_id].showSuccess(options);
+		}
+		else if ( type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
+		{
+			self.engines[self.current_engine_id].showInfo(options);
+		}
+		else if ( type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
+		{
+			self.engines[self.current_engine_id].showWarning(options);
+		}
+		else if ( $type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
+		{
+			self.engines[self.current_engine_id].showError(options);
+		}
+
+		self.finalize();
 	}
 };
 /**
@@ -406,7 +442,7 @@ pxlCore_Ajax_Request.prototype =
 			{
 				if ( typeof result.message.type === 'number' && typeof result.message.text === 'string' )
 				{
-					$pxl.ui.message.engine.show(result.message.type, result.message.text);
+					$pxl.notification.show({ type: result.message.type, message: result.message.text });
 				}
 			}
 
@@ -414,7 +450,7 @@ pxlCore_Ajax_Request.prototype =
 			{
 				setTimeout(function()
 				{
-					return $pxl.uri.redirect(result.redirect.url);
+					return $pxl.redirect(result.redirect.url);
 				}, result.redirect.delay);
 			}
 
@@ -653,7 +689,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.18',
+	version: '1.0.19',
 
 	options:
 	{

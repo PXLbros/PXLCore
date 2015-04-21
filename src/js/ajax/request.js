@@ -112,7 +112,7 @@ pxlCore_Ajax_Request.prototype =
 			{
 				if ( typeof result.message.type === 'number' && typeof result.message.text === 'string' )
 				{
-					$pxl.ui.message.engine.show(result.message.type, result.message.text);
+					$pxl.notification.show({ type: result.message.type, message: result.message.text });
 				}
 			}
 
@@ -120,7 +120,7 @@ pxlCore_Ajax_Request.prototype =
 			{
 				setTimeout(function()
 				{
-					return $pxl.uri.redirect(result.redirect.url);
+					return $pxl.redirect(result.redirect.url);
 				}, result.redirect.delay);
 			}
 
