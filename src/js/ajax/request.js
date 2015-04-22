@@ -108,11 +108,11 @@ pxlCore_Ajax_Request.prototype =
 				inst.success(result);
 			}
 
-			if ( typeof result.message !== 'undefined' && result.message !== null )
+			if ( typeof result.notification !== 'undefined' && result.notification !== null )
 			{
-				if ( typeof result.message.type === 'number' && typeof result.message.text === 'string' )
+				if ( typeof result.notification.type === 'number' && typeof result.notification.text === 'string' )
 				{
-					$pxl.notification.show({ type: result.message.type, message: result.message.text });
+					$pxl.notification.show({ type: result.notification.type, message: result.notification.text });
 				}
 			}
 

@@ -278,24 +278,43 @@ pxlCore_Notification.prototype =
 			return false;
 		}
 
+		var type;
+
+		if ( options.type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
+		{
+			type = 'Success';
+		}
+		else if ( options.type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
+		{
+			type = 'Info';
+		}
+		else if ( options.type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
+		{
+			type = 'Warning';
+		}
+		else if ( options.type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
+		{
+			type = 'Error';
+		}
+
 		if ( self.prepare(options, type) === false )
 		{
 			return;
 		}
 
-		if ( type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
+		if ( options.type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
 		{
 			self.engines[self.current_engine_id].showSuccess(options);
 		}
-		else if ( type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
+		else if ( options.type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
 		{
 			self.engines[self.current_engine_id].showInfo(options);
 		}
-		else if ( type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
+		else if ( options.type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
 		{
 			self.engines[self.current_engine_id].showWarning(options);
 		}
-		else if ( $type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
+		else if ( options.type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
 		{
 			self.engines[self.current_engine_id].showError(options);
 		}
@@ -438,11 +457,11 @@ pxlCore_Ajax_Request.prototype =
 				inst.success(result);
 			}
 
-			if ( typeof result.message !== 'undefined' && result.message !== null )
+			if ( typeof result.notification !== 'undefined' && result.notification !== null )
 			{
-				if ( typeof result.message.type === 'number' && typeof result.message.text === 'string' )
+				if ( typeof result.notification.type === 'number' && typeof result.notification.text === 'string' )
 				{
-					$pxl.notification.show({ type: result.message.type, message: result.message.text });
+					$pxl.notification.show({ type: result.notification.type, message: result.notification.text });
 				}
 			}
 
