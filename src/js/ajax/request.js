@@ -148,6 +148,11 @@ pxlCore_Ajax_Request.prototype =
 				{
 					inst.error(errorThrown);
 				}
+
+				if ( $pxl.options.debug === true )
+				{
+					$pxl.notification.showError({ message: xhr.responseText, autoHide: false });
+				}
 			}
 		});
 	}

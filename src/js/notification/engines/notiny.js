@@ -45,7 +45,8 @@ pxlCore_Notification_Engine_Notiny.prototype =
 		{
 			text: options.message,
 			position: self.options.position,
-			width: self.options.width
+			width: self.options.width,
+			delay: (self.options.autoHide === true ? 0 : 3000)
 		});
 	}
 };
