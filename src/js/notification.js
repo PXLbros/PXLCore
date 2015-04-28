@@ -91,13 +91,6 @@ pxlCore_Notification.prototype =
 	{
 		var self = this;
 
-		if ( typeof options.message === 'undefined' )
-		{
-			$pxl.error('pxlCore/Notification: Missing required argument "message".');
-
-			return false;
-		}
-
 		if ( typeof options.engine === 'string' )
 		{
 			if ( typeof self.engines[options.engine] !== 'object' )
@@ -117,6 +110,25 @@ pxlCore_Notification.prototype =
 			$pxl.error('pxlCore/Notification: Engine "' + self.current_engine_id + '" doesn\'t support type "' + type + '".');
 
 			return false;
+		}
+
+		if ( type === 'Success' || type === 'Info' || type === 'Warning' || type === 'Error' )
+		{
+			if ( typeof options.message === 'undefined' )
+			{
+				$pxl.error('pxlCore/Notification: Missing required argument "message".');
+
+				return false;
+			}
+		}
+		else if ( type === 'Confirm' )
+		{
+			if ( typeof options.question === 'undefined' )
+			{
+				$pxl.error('pxlCore/Notification: Missing required argument "question".');
+
+				return false;
+			}
 		}
 
 		return true;
@@ -179,6 +191,20 @@ pxlCore_Notification.prototype =
 		}
 
 		self.engines[self.current_engine_id].showError(options);
+
+		self.finalize();
+	},
+
+	showConfirm: function(options)
+	{
+		var self = this;
+
+		if ( self.prepare(options, 'Confirm') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showConfirm(options);
 
 		self.finalize();
 	},

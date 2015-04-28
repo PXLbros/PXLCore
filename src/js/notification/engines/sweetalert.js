@@ -16,7 +16,7 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 	{
 		var self = this;
 
-		if ( typeof sweetAlert !== 'object' )
+		if ( typeof sweetAlert !== 'function' )
 		{
 			return false;
 		}
@@ -28,6 +28,17 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 
 	showSuccess: function(options)
 	{
-		alert('hello sweetalert');
+	},
+
+	showConfirm: function(options)
+	{
+		swal(
+		{
+			title: options.question,
+			type: (typeof options.type === 'string' ? options.type : 'info'),
+			showCancelButton: true,
+			confirmButtonText: (typeof options.buttons === 'object' && typeof options.buttons.yes === 'string' ? options.buttons.yes : 'Yes'),
+			cancelButtonText: (typeof options.buttons === 'object' && typeof options.buttons.no === 'string' ? options.buttons.no : 'No')
+		}, (typeof options.yes === 'function' ? options.yes : function() {}));
 	}
 };
