@@ -16,7 +16,7 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 	{
 		var self = this;
 
-		if ( typeof sweetAlert !== 'object' )
+		if ( typeof sweetAlert !== 'function' )
 		{
 			return false;
 		}
@@ -28,7 +28,18 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 
 	showSuccess: function(options)
 	{
-		alert('hello sweetalert');
+	},
+
+	showConfirm: function(options)
+	{
+		swal(
+		{
+			title: options.question,
+			type: (typeof options.type === 'string' ? options.type : 'info'),
+			showCancelButton: true,
+			confirmButtonText: (typeof options.buttons === 'object' && typeof options.buttons.yes === 'string' ? options.buttons.yes : 'Yes'),
+			cancelButtonText: (typeof options.buttons === 'object' && typeof options.buttons.no === 'string' ? options.buttons.no : 'No')
+		}, (typeof options.yes === 'function' ? options.yes : function() {}));
 	}
 };
 /**
@@ -78,7 +89,8 @@ pxlCore_Notification_Engine_Notiny.prototype =
 		{
 			text: options.message,
 			position: self.options.position,
-			width: self.options.width
+			width: self.options.width,
+			delay: (self.options.autoHide === true ? 0 : 3000)
 		});
 	}
 };
@@ -175,13 +187,6 @@ pxlCore_Notification.prototype =
 	{
 		var self = this;
 
-		if ( typeof options.message === 'undefined' )
-		{
-			$pxl.error('pxlCore/Notification: Missing required argument "message".');
-
-			return false;
-		}
-
 		if ( typeof options.engine === 'string' )
 		{
 			if ( typeof self.engines[options.engine] !== 'object' )
@@ -201,6 +206,25 @@ pxlCore_Notification.prototype =
 			$pxl.error('pxlCore/Notification: Engine "' + self.current_engine_id + '" doesn\'t support type "' + type + '".');
 
 			return false;
+		}
+
+		if ( type === 'Success' || type === 'Info' || type === 'Warning' || type === 'Error' )
+		{
+			if ( typeof options.message === 'undefined' )
+			{
+				$pxl.error('pxlCore/Notification: Missing required argument "message".');
+
+				return false;
+			}
+		}
+		else if ( type === 'Confirm' )
+		{
+			if ( typeof options.question === 'undefined' )
+			{
+				$pxl.error('pxlCore/Notification: Missing required argument "question".');
+
+				return false;
+			}
 		}
 
 		return true;
@@ -263,6 +287,20 @@ pxlCore_Notification.prototype =
 		}
 
 		self.engines[self.current_engine_id].showError(options);
+
+		self.finalize();
+	},
+
+	showConfirm: function(options)
+	{
+		var self = this;
+
+		if ( self.prepare(options, 'Confirm') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showConfirm(options);
 
 		self.finalize();
 	},
@@ -497,6 +535,11 @@ pxlCore_Ajax_Request.prototype =
 				{
 					inst.error(errorThrown);
 				}
+
+				if ( $pxl.options.debug === true )
+				{
+					$pxl.notification.showError({ message: xhr.responseText, autoHide: false });
+				}
 			}
 		});
 	}
@@ -708,7 +751,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.19',
+	version: '1.0.23',
 
 	options:
 	{
