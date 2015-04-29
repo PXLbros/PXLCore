@@ -1,6 +1,6 @@
 /**
  * pxlCore/Dialog
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_Dialog($pxl)

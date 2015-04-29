@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.23',
+	version: '1.0.25',
 
 	options:
 	{
@@ -148,6 +148,11 @@ pxlCore.prototype =
 		return object === Object(object);
 	},
 
+	inArray: function(subject, array)
+	{
+		return ($.inArray(subject, array) !== -1);
+	},
+
 	getObjectSize: function(object)
 	{
 		var size = 0,
@@ -167,5 +172,44 @@ pxlCore.prototype =
 	redirect: function(url, with_base_url)
 	{
 		window.location = (typeof with_base_url === 'boolean' ? this.uri.urlize(url) : url);
+	},
+
+	implode: function(glue, pieces, last_glue)
+	{
+		var i = '',
+			return_value = '',
+			append_glue = '';
+
+		last_glue = last_glue || null;
+
+		if ( arguments.length === 1 )
+		{
+			pieces = glue;
+			glue = '';
+		}
+
+		if ( typeof pieces === 'object' )
+		{
+			if ( Object.prototype.toString.call(pieces) === '[object Array]' && last_glue === null )
+			{
+				return pieces.join(glue);
+			}
+
+			var num_pieces = pieces.length;
+
+			for ( i in pieces )
+			{
+				if ( pieces.hasOwnProperty(i) )
+				{
+					return_value += append_glue + pieces[i];
+
+					append_glue = (i < (num_pieces - 2) ? glue : last_glue);
+				}
+			}
+
+			return return_value;
+		}
+
+		return pieces;
 	}
 };

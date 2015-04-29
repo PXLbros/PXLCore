@@ -1,6 +1,6 @@
 /**
  * pxlCore/Notification/Engine/SweetAlert
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_Notification_Engine_SweetAlert($pxl)
@@ -32,9 +32,12 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 
 	showConfirm: function(options)
 	{
+		var title = (typeof options.title === 'string' ? options.title : null);
+
 		swal(
 		{
-			title: options.question,
+			title: title,
+			text: (options.question !== null ? options.question : null),
 			type: (typeof options.type === 'string' ? options.type : 'info'),
 			showCancelButton: true,
 			confirmButtonText: (typeof options.buttons === 'object' && typeof options.buttons.yes === 'string' ? options.buttons.yes : 'Yes'),

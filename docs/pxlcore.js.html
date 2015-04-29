@@ -26,8 +26,111 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
+ * pxlCore/Notification/Engine/SweetAlert
+ * @param {string} $pxl - pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Notification_Engine_SweetAlert($pxl)
+{
+	this.loaded = this.init($pxl);
+}
+
+pxlCore_Notification_Engine_SweetAlert.prototype =
+{
+	$pxl: null,
+
+	init: function($pxl)
+	{
+		var self = this;
+
+		if ( typeof sweetAlert !== 'function' )
+		{
+			return false;
+		}
+
+		self.$pxl = $pxl;
+
+		return true;
+	},
+
+	showSuccess: function(options)
+	{
+	},
+
+	showConfirm: function(options)
+	{
+		var title = (typeof options.title === 'string' ? options.title : null);
+
+		swal(
+		{
+			title: title,
+			text: (options.question !== null ? options.question : null),
+			type: (typeof options.type === 'string' ? options.type : 'info'),
+			showCancelButton: true,
+			confirmButtonText: (typeof options.buttons === 'object' &amp;&amp; typeof options.buttons.yes === 'string' ? options.buttons.yes : 'Yes'),
+			cancelButtonText: (typeof options.buttons === 'object' &amp;&amp; typeof options.buttons.no === 'string' ? options.buttons.no : 'No')
+		}, (typeof options.yes === 'function' ? options.yes : function() {}));
+	}
+};
+/**
+ * pxlCore/Notification/Engine/Notiny
+ * @param {string} $pxl - pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Notification_Engine_Notiny($pxl)
+{
+	this.loaded = this.init($pxl);
+}
+
+pxlCore_Notification_Engine_Notiny.prototype =
+{
+	$pxl: null,
+
+	options:
+	{
+		position: 'right-top',
+		width: 'auto'
+	},
+
+	init: function($pxl)
+	{
+		var self = this;
+
+		if ( typeof $.notiny !== 'function' )
+		{
+			return false;
+		}
+
+		self.$pxl = $pxl;
+
+		return true;
+	},
+
+	showSuccess: function(options)
+	{
+		alert('hello notiny');
+	},
+
+	showError: function(options)
+	{
+		var self = this;
+
+		var auto_hide = ((typeof options.autoHide === 'boolean' &amp;&amp; options.autoHide === true) || (typeof options.autoHide === 'number' &amp;&amp; options.autoHide > 0));
+
+		$.notiny(
+		{
+			text: options.message,
+			position: self.options.position,
+			width: self.options.width,
+			delay: (typeof options.autoHide === 'number' ? options.autoHide : 3000),
+			autohide: auto_hide,
+			clickhide: (typeof options.hideOnClick === 'boolean' ? options.hideOnClick : true)
+		});
+	}
+};
+/**
  * pxlCore/Notification
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_Notification($pxl)
@@ -37,40 +140,263 @@ function pxlCore_Notification($pxl)
 
 pxlCore_Notification.prototype =
 {
-	current_engine: null,
+	engines: [],
+	default_engine_id: null,
+	current_engine_id: null,
 
 	init: function($pxl)
 	{
+		var self = this;
+
 		if ( $pxl.options.debug === true )
 		{
 			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
 		}
+
+		var engine_index,
+			engine_id,
+			engine_name,
+			engine;
+
+		for ( engine_index = 0, num_engines = $pxl.options.notification.engines.length; engine_index &lt; num_engines; engine_index++ )
+		{
+			engine_id = $pxl.options.notification.engines[engine_index];
+			engine_name = 'pxlCore_Notification_Engine_' + engine_id;
+			engine = new window[engine_name]($pxl);
+
+			if ( engine.loaded === false )
+			{
+				$pxl.error('Could not load notification engine "' + engine_id + '".');
+
+				continue;
+			}
+
+			self.engines[engine_id] = engine;
+
+			if ( (engine_index === 0) || (engine_index > 0 &amp;&amp; self.default_engine_id === null) )
+			{
+				self.default_engine_id = engine_id;
+			}
+		}
+
+		var num_loaded_engines = $pxl.getObjectSize(self.engines);
+
+		if ( self.default_engine_id !== null )
+		{
+			self.setEngine(self.default_engine_id);
+		}
+
+		if ( $pxl.options.debug === true )
+		{
+			var loaded_engines_debug_str = 'Loaded Engines: ';
+
+			if ( num_loaded_engines > 0 )
+			{
+				engine_index = 0;
+
+				for ( engine_id in self.engines )
+				{
+					loaded_engines_debug_str += engine_id + (engine_index &lt; (num_loaded_engines - 1) ? ', ' : '');
+
+					engine_index++;
+				}
+			}
+			else
+			{
+				loaded_engines_debug_str += 'None';
+			}
+
+			$pxl.log(loaded_engines_debug_str);
+
+			$pxl.log('Default Engine: ' + (self.default_engine_id !== null ? self.default_engine_id : '/'));
+		}
 	},
 
-	prepare: function(options)
+	setEngine: function(engine_id)
 	{
-		
+		this.current_engine_id = engine_id;
 	},
 
-	show_success: function(options)
+	prepare: function(options, type)
 	{
+		var self = this;
+
+		if ( typeof options.engine === 'string' )
+		{
+			if ( typeof self.engines[options.engine] !== 'object' )
+			{
+				$pxl.error('pxlCore/Notification: Engine "' + options.engine + '" not found.');
+
+				return false;
+			}
+
+			self.setEngine(options.engine);
+		}
+
+		var current_engine = self.engines[self.current_engine_id];
+
+		if ( typeof current_engine['show' + type] !== 'function' )
+		{
+			$pxl.error('pxlCore/Notification: Engine "' + self.current_engine_id + '" doesn\'t support type "' + type + '".');
+
+			return false;
+		}
+
+		if ( type === 'Success' || type === 'Info' || type === 'Warning' || type === 'Error' )
+		{
+			if ( typeof options.message === 'undefined' )
+			{
+				$pxl.error('pxlCore/Notification: Missing required argument "message".');
+
+				return false;
+			}
+		}
+		else if ( type === 'Confirm' )
+		{
+			if ( typeof options.question === 'undefined' )
+			{
+				$pxl.error('pxlCore/Notification: Missing required argument "question".');
+
+				return false;
+			}
+		}
+
+		return true;
 	},
 
-	show_info: function(options)
+	finalize: function()
 	{
+		this.setEngine(this.default_engine_id);
 	},
 
-	show_warning: function(options)
+	showSuccess: function(options)
 	{
+		var self = this;
+
+		if ( self.prepare(options, 'Success') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showSuccess(options);
+
+		self.finalize();
 	},
 
-	show_error: function(options)
+	showInfo: function(options)
 	{
+		var self = this;
+
+		if ( self.prepare(options, 'Info') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showInfo(options);
+
+		self.finalize();
+	},
+
+	showWarning: function(options)
+	{
+		var self = this;
+
+		if ( self.prepare(options, 'Warning') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showWarning(options);
+
+		self.finalize();
+	},
+
+	showError: function(options)
+	{
+		var self = this;
+
+		if ( self.prepare(options, 'Error') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showError(options);
+
+		self.finalize();
+	},
+
+	showConfirm: function(options)
+	{
+		var self = this;
+
+		if ( self.prepare(options, 'Confirm') === false )
+		{
+			return;
+		}
+
+		self.engines[self.current_engine_id].showConfirm(options);
+
+		self.finalize();
+	},
+
+	show: function(options)
+	{
+		var self = this;
+
+		if ( typeof options.type === 'undefined' )
+		{
+			$pxl.error('pxlCore/Notification: Missing required argument "type".');
+
+			return false;
+		}
+
+		var type;
+
+		if ( options.type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
+		{
+			type = 'Success';
+		}
+		else if ( options.type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
+		{
+			type = 'Info';
+		}
+		else if ( options.type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
+		{
+			type = 'Warning';
+		}
+		else if ( options.type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
+		{
+			type = 'Error';
+		}
+
+		if ( self.prepare(options, type) === false )
+		{
+			return;
+		}
+
+		if ( options.type === 1 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_SUCCESS
+		{
+			self.engines[self.current_engine_id].showSuccess(options);
+		}
+		else if ( options.type === 2 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_INFO
+		{
+			self.engines[self.current_engine_id].showInfo(options);
+		}
+		else if ( options.type === 3 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_WARNING
+		{
+			self.engines[self.current_engine_id].showWarning(options);
+		}
+		else if ( options.type === 4 ) // PXLBros\PXLFramework\Helpers\NOTIFICATION_TYPE_ERROR
+		{
+			self.engines[self.current_engine_id].showError(options);
+		}
+
+		self.finalize();
 	}
 };
 /**
  * pxlCore/Dialog
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_Dialog($pxl)
@@ -86,11 +412,175 @@ pxlCore_Dialog.prototype =
 		{
 			$pxl.log('~ pxlCore/Dialog ~', '#CCC', 'black');
 		}
+	},
+
+	init_from_element: function(selector, options)
+	{
+		console.log('init from element');
+	}
+};
+/**
+ * pxlCore/Ajax_Request
+ * @param {string} $pxl - pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Ajax_Request($pxl)
+{
+	this.init($pxl);
+}
+
+pxlCore_Ajax_Request.prototype =
+{
+	$pxl: null,
+
+	$form: null,
+
+	url: '',
+	data: {},
+	method: 'GET',
+	data_type: 'json',
+	cache: false,
+	async: true,
+
+	result: null,
+
+	before: null,
+	progress: null,
+	success: null,
+	error: null,
+	always: null,
+	abort: null,
+
+	init: function($pxl)
+	{
+		var self = this;
+
+		self.$pxl = $pxl;
+
+		if ( self.$pxl.options.debug === true )
+		{
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+		}
+	},
+
+	execute: function()
+	{
+		var inst = this;
+
+		if ( $pxl.isUndefined(inst.url) )
+		{
+			$pxl.log('Missing AJAX URL.');
+
+			return;
+		}
+
+		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) )
+		{
+			$pxl.ajax.requests[inst.url].abort();
+		}
+
+		var file_upload = ($pxl.isDefined(inst.file_upload) &amp;&amp; inst.file_upload === true);
+
+		var headers = { 'X-XSRF-TOKEN': $pxl.framework.csrf_token };
+
+		if ( file_upload === true &amp;&amp; $pxl.isObject(inst.file_upload_data) )
+		{
+			headers = $.extend(headers, inst.file_upload_data);
+		}
+
+		$pxl.ajax.requests[inst.url] = $.ajax(
+		{
+			type: inst.method,
+			url: inst.url,
+			data: inst.data,
+			dataType: inst.data_type,
+			cache: inst.cache,
+			async: inst.async,
+			processData: (file_upload !== true),
+			contentType: (file_upload === true ? false : 'application/x-www-form-urlencoded; charset=UTF-8'),
+			headers: headers,
+			xhr: function()
+			{
+				var xhr = $.ajaxSettings.xhr();
+
+				if ( $pxl.isFunction(inst.progress) )
+				{
+					xhr.upload.onprogress = function(e)
+					{
+						var percent = (e.loaded / e.total) * 100;
+
+						inst.progress(percent);
+					};
+				}
+
+				return xhr;
+			},
+			beforeSend: function(xhr, data)
+			{
+				if ( $pxl.isFunction(inst.before) )
+				{
+					inst.before(xhr, data);
+				}
+			}
+		}).done(function(result)
+		{
+			if ( $pxl.isFunction(inst.success) )
+			{
+				inst.success(result);
+			}
+
+			if ( typeof result.notification !== 'undefined' &amp;&amp; result.notification !== null )
+			{
+				if ( typeof result.notification.type === 'number' &amp;&amp; typeof result.notification.text === 'string' )
+				{
+					$pxl.notification.show({ type: result.notification.type, message: result.notification.text });
+				}
+			}
+
+			if ( !$pxl.isUndefined(result.redirect) )
+			{
+				setTimeout(function()
+				{
+					return $pxl.redirect(result.redirect.url);
+				}, result.redirect.delay);
+			}
+
+			inst.result = result;
+		}).always(function(result)
+		{
+			if ( $pxl.isFunction(inst.always) )
+			{
+				inst.always(result);
+			}
+
+			delete $pxl.ajax.requests[inst.url];
+		}).fail(function(xhr, textStatus, errorThrown)
+		{
+			if ( xhr === 'abort' )
+			{
+				if ( $pxl.isFunction(inst.abort) )
+				{
+					inst.abort();
+				}
+			}
+			else
+			{
+				if ( $pxl.isFunction(inst.error) )
+				{
+					inst.error(errorThrown);
+				}
+
+				if ( $pxl.options.debug === true )
+				{
+					$pxl.notification.showError({ message: xhr.responseText, autoHide: false });
+				}
+			}
+		});
 	}
 };
 /**
  * pxlCore/Ajax
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_Ajax($pxl)
@@ -100,17 +590,141 @@ function pxlCore_Ajax($pxl)
 
 pxlCore_Ajax.prototype =
 {
+	$pxl: null,
+
+	requests: [],
+
 	init: function($pxl)
 	{
-		if ( $pxl.options.debug === true )
+		var self = this;
+
+		self.$pxl = $pxl;
+
+		if ( self.$pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
 		}
+	},
+
+	get: function(url, data, callbacks, extra)
+	{
+		var self = this;
+
+		var request = new pxlCore_Ajax_Request(self.$pxl);
+		request.method = 'GET';
+		request.url = url;
+		request.data = data;
+
+		if ( self.$pxl.isUndefined(callbacks) )
+		{
+			callbacks = {};
+		}
+
+		if ( self.$pxl.isFunction(callbacks.before) )
+		{
+			request.before = callbacks.before;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.progress) )
+		{
+			request.progress = callbacks.progress;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.success) )
+		{
+			request.success = callbacks.success;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.error) )
+		{
+			request.error = callbacks.error;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.always) )
+		{
+			request.always = callbacks.always;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.abort) )
+		{
+			request.abort = callbacks.abort;
+		}
+
+		if ( self.$pxl.isObject(extra) )
+		{
+			for ( var key in extra )
+			{
+				if ( extra.hasOwnProperty(key) )
+				{
+					request[key] = extra[key];
+				}
+			}
+		}
+
+		request.execute();
+	},
+
+	post: function(url, data, callbacks, extra)
+	{
+		var self = this;
+
+		var request = new pxlCore_Ajax_Request(self.$pxl);
+		request.method = 'POST';
+		request.url = url;
+		request.data = data;
+
+		if ( self.$pxl.isUndefined(callbacks) )
+		{
+			callbacks = {};
+		}
+
+		if ( self.$pxl.isFunction(callbacks.before) )
+		{
+			request.before = callbacks.before;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.progress) )
+		{
+			request.progress = callbacks.progress;
+		}
+
+		if (self. $pxl.isFunction(callbacks.success) )
+		{
+			request.success = callbacks.success;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.error) )
+		{
+			request.error = callbacks.error;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.always) )
+		{
+			request.always = callbacks.always;
+		}
+
+		if ( self.$pxl.isFunction(callbacks.abort) )
+		{
+			request.abort = callbacks.abort;
+		}
+
+		if ( self.$pxl.isObject(extra) )
+		{
+			for ( var key in extra )
+			{
+				if ( extra.hasOwnProperty(key) )
+				{
+					request[key] = extra[key];
+				}
+			}
+		}
+
+		request.execute();
 	}
 };
 /**
  * pxlCore/UI
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_UI($pxl)
@@ -129,6 +743,169 @@ pxlCore_UI.prototype =
 	}
 };
 /**
+ * pxlCore/UI
+ * @param {string} $pxl - pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_URI($pxl)
+{
+	this.init($pxl);
+}
+
+pxlCore_URI.prototype =
+{
+	init: function($pxl)
+	{
+		if ( $pxl.options.debug === true )
+		{
+			$pxl.log('~ pxlCore/URI ~', '#CCC', 'black');
+		}
+	},
+
+	urlize: function(url)
+	{
+		if ( $pxl.isUndefined($pxl.framework.base_url) )
+		{
+			$pxl.log('Base URL not set.');
+
+			return;
+		}
+
+		return $pxl.framework.base_url + url;
+	}
+};
+/**
+ * pxlCore/Form/FileUpload
+ * @param {string} $pxl - pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Form_FileUpload($pxl)
+{
+	this._init($pxl);
+}
+
+pxlCore_Form_FileUpload.prototype =
+{
+	$pxl: null,
+
+	files: [],
+	num_files: 0,
+	current_file_index: 0,
+
+	allowed_mime_types: null,
+	max_file_size: null,
+	events: null,
+
+	_init: function($pxl)
+	{
+		var self = this;
+
+		self.$pxl = $pxl;
+	},
+
+	init: function(files, save_url, allowed_mime_types, additional_data, events)
+	{
+		var self = this;
+
+		self.allowed_mime_types = allowed_mime_types;
+		self.events = events;
+
+		for ( var file_index = 0, num_files = files.length; file_index &lt; num_files; file_index++ )
+		{
+			var file = files[file_index];
+
+			var file_obj =
+			{
+				file: file,
+				mime_error: (self.checkFileType(file) === false),
+				size_error: (self.checkFileSize(file) === false)
+			};
+
+			self.files.push(file_obj);
+		}
+
+		return self;
+	},
+
+	checkFileType: function(file)
+	{
+		var self = this;
+
+		if ( self.allowed_mime_types === null )
+		{
+			return true;
+		}
+
+		if ( !$pxl.inArray(file.type, self.allowed_mime_types) )
+		{
+			//self.throwError('Selected file type (' + file.type + ') is not valid (Allowed file types are: ' + $pxl.implode(', ', self.allowed_mime_types, ' and ') + ').');
+
+			return false;
+		}
+
+		return true;
+	},
+
+	checkFileSize: function(file)
+	{
+		var self = this;
+
+		if ( self.max_file_size === null )
+		{
+			return true;
+		}
+
+		return true;
+	},
+
+	start: function()
+	{
+		if ( $pxl.options.debug === true )
+		{
+		}
+	},
+
+	throwError: function(error)
+	{
+		var self = this;
+
+		if ( typeof self.events.onError === 'function' )
+		{
+			self.events.onError(error);
+		}
+	}
+};
+/**
+ * pxlCore/Form
+ * @param {string} $pxl - pxlCore object reference.
+ * @constructor
+ */
+function pxlCore_Form($pxl)
+{
+	this.init($pxl);
+}
+
+pxlCore_Form.prototype =
+{
+	$pxl: null,
+
+	file_upload: null,
+
+	init: function($pxl)
+	{
+		var self = this;
+
+		if ( $pxl.options.debug === true )
+		{
+			$pxl.log('~ pxlCore/Form ~', '#CCC', 'black');
+		}
+
+		self.$pxl = $pxl;
+
+		self.file_upload = new pxlCore_Form_FileUpload($pxl);
+	}
+};
+/**
  * pxlCore
  * @constructor
  */
@@ -139,7 +916,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.7',
+	version: '1.0.25',
 
 	options:
 	{
@@ -156,6 +933,9 @@ pxlCore.prototype =
 	ajax: null,
 	dialog: null,
 	notification: null,
+	uri: null,
+
+	libraries: [],
 
 	init: function(options)
 	{
@@ -172,6 +952,15 @@ pxlCore.prototype =
 		if ( self.options.debug === true )
 		{
 			self.log('~ pxlCore ~', 'black', 'white');
+			self.log('Version: ' + self.version);
+			self.log('Detected pxlFramework: ' + (self.framework !== null ? 'Yes' : 'No'));
+
+			if ( self.framework !== null )
+			{
+				self.log('Current Page: ' + self.framework.current_page);
+				self.log('Page ID: ' + self.framework.page_id);
+				self.log('Base URL: ' + self.framework.base_url);
+			}
 		}
 
 		// UI
@@ -185,6 +974,9 @@ pxlCore.prototype =
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);
+
+		// URI
+		self.uri = new pxlCore_URI(self);
 	},
 
 	detectPXLFramework: function()
@@ -214,7 +1006,12 @@ pxlCore.prototype =
 		console.log('%c' + text, (style !== '' ? style : null));
 	},
 
-	extend: function (defaults, options)
+	error: function(text)
+	{
+		this.log(text, '#F00', '#FFF');
+	},
+
+	extend: function(defaults, options)
 	{
 	    var extended = {},
 	        key;
@@ -236,6 +1033,91 @@ pxlCore.prototype =
 	    }
 
 	    return extended;
+	},
+
+	isUndefined: function(object)
+	{
+		return object == void 0;
+	},
+
+	isDefined: function(object)
+	{
+		return !this.isUndefined(object);
+	},
+
+	isFunction: function(object)
+	{
+		return (typeof object === 'function');
+	},
+
+	isObject: function(object)
+	{
+		return object === Object(object);
+	},
+
+	inArray: function(subject, array)
+	{
+		return ($.inArray(subject, array) !== -1);
+	},
+
+	getObjectSize: function(object)
+	{
+		var size = 0,
+			key;
+
+		for ( key in object )
+		{
+			if ( object.hasOwnProperty(key) )
+			{
+				size++;
+			}
+		}
+
+		return size;
+	},
+
+	redirect: function(url, with_base_url)
+	{
+		window.location = (typeof with_base_url === 'boolean' ? this.uri.urlize(url) : url);
+	},
+
+	implode: function(glue, pieces, last_glue)
+	{
+		var i = '',
+			return_value = '',
+			append_glue = '';
+
+		last_glue = last_glue || null;
+
+		if ( arguments.length === 1 )
+		{
+			pieces = glue;
+			glue = '';
+		}
+
+		if ( typeof pieces === 'object' )
+		{
+			if ( Object.prototype.toString.call(pieces) === '[object Array]' &amp;&amp; last_glue === null )
+			{
+				return pieces.join(glue);
+			}
+
+			var num_pieces = pieces.length;
+
+			for ( i in pieces )
+			{
+				if ( pieces.hasOwnProperty(i) )
+				{
+					return_value += append_glue + pieces[i];
+
+					append_glue = (i &lt; (num_pieces - 2) ? glue : last_glue);
+				}
+			}
+
+			return return_value;
+		}
+
+		return pieces;
 	}
 };</code></pre>
         </article>
@@ -247,13 +1129,13 @@ pxlCore.prototype =
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pxlCore.html">pxlCore</a></li><li><a href="pxlCore_Ajax.html">pxlCore_Ajax</a></li><li><a href="pxlCore_Dialog.html">pxlCore_Dialog</a></li><li><a href="pxlCore_Notification.html">pxlCore_Notification</a></li><li><a href="pxlCore_UI.html">pxlCore_UI</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pxlCore.html">pxlCore</a></li><li><a href="pxlCore_Ajax.html">pxlCore_Ajax</a></li><li><a href="pxlCore_Ajax_Request.html">pxlCore_Ajax_Request</a></li><li><a href="pxlCore_Dialog.html">pxlCore_Dialog</a></li><li><a href="pxlCore_Form.html">pxlCore_Form</a></li><li><a href="pxlCore_Form_FileUpload.html">pxlCore_Form_FileUpload</a></li><li><a href="pxlCore_Notification.html">pxlCore_Notification</a></li><li><a href="pxlCore_Notification_Engine_Notiny.html">pxlCore_Notification_Engine_Notiny</a></li><li><a href="pxlCore_Notification_Engine_SweetAlert.html">pxlCore_Notification_Engine_SweetAlert</a></li><li><a href="pxlCore_UI.html">pxlCore_UI</a></li><li><a href="pxlCore_URI.html">pxlCore_URI</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Wed Apr 15 2015 15:26:06 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Apr 28 2015 18:27:18 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -64,6 +64,8 @@ gulp.task('concat', function()
 			JS_DIR + 'ajax.js',
 			JS_DIR + 'ui.js',
 			JS_DIR + 'uri.js',
+			JS_DIR + 'form/file_upload.js',
+			JS_DIR + 'form.js',
 			JS_DIR + 'pxlcore.js'
 		])
 		.pipe(concat('pxlcore.js'))
@@ -91,7 +93,7 @@ gulp.task('watch', function()
 {
 	gulp.watch(SASS_DIR + '**/*.scss', ['compass', 'minify-css']);
 	gulp.watch(JS_DIR + '**/*.js', ['lint', 'concat', 'uglify']);
-	//gulp.watch(DIST_DIR + 'pxlcore.js', ['jsdoc']);
+	gulp.watch(DIST_DIR + 'pxlcore.js', ['jsdoc']);
 });
 
-gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', /*'jsdoc', */'uglify', 'watch']);
+gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'jsdoc', 'uglify', 'watch']);

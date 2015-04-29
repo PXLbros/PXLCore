@@ -1,6 +1,6 @@
 /**
  * pxlCore/Notification/Engine/Notiny
- * @param {string} $pxl - The pxlCore object reference.
+ * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
 function pxlCore_Notification_Engine_Notiny($pxl)
@@ -41,12 +41,16 @@ pxlCore_Notification_Engine_Notiny.prototype =
 	{
 		var self = this;
 
+		var auto_hide = ((typeof options.autoHide === 'boolean' && options.autoHide === true) || (typeof options.autoHide === 'number' && options.autoHide > 0));
+
 		$.notiny(
 		{
 			text: options.message,
 			position: self.options.position,
 			width: self.options.width,
-			delay: (self.options.autoHide === true ? 0 : 3000)
+			delay: (typeof options.autoHide === 'number' ? options.autoHide : 3000),
+			autohide: auto_hide,
+			clickhide: (typeof options.hideOnClick === 'boolean' ? options.hideOnClick : true)
 		});
 	}
 };
