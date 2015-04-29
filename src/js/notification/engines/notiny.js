@@ -34,14 +34,26 @@ pxlCore_Notification_Engine_Notiny.prototype =
 
 	showSuccess: function(options)
 	{
-		alert('hello notiny');
+		var self = this;
+
+		var auto_hide = ((typeof options.autoHide === 'undefined') || (typeof options.autoHide === 'boolean' && options.autoHide === true) || (typeof options.autoHide === 'number' && options.autoHide > 0));
+
+		$.notiny(
+		{
+			text: options.message,
+			position: self.options.position,
+			width: self.options.width,
+			delay: (typeof options.autoHide === 'number' ? options.autoHide : 3000),
+			autohide: auto_hide,
+			clickhide: (typeof options.hideOnClick === 'boolean' ? options.hideOnClick : true)
+		});
 	},
 
 	showError: function(options)
 	{
 		var self = this;
 
-		var auto_hide = ((typeof options.autoHide === 'boolean' && options.autoHide === true) || (typeof options.autoHide === 'number' && options.autoHide > 0));
+		var auto_hide = ((typeof options.autoHide === 'undefined') || (typeof options.autoHide === 'boolean' && options.autoHide === true) || (typeof options.autoHide === 'number' && options.autoHide > 0));
 
 		$.notiny(
 		{
