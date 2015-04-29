@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.25',
+	version: '1.0.26',
 
 	options:
 	{
@@ -27,6 +27,7 @@ pxlCore.prototype =
 	dialog: null,
 	notification: null,
 	uri: null,
+	form: null,
 
 	libraries: [],
 
@@ -70,6 +71,9 @@ pxlCore.prototype =
 
 		// URI
 		self.uri = new pxlCore_URI(self);
+
+		// Form
+		self.form = new pxlCore_Form(self);
 	},
 
 	detectPXLFramework: function()
