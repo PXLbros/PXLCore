@@ -53,7 +53,7 @@ pxlCore_Ajax_Request.prototype =
 			return;
 		}
 
-		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) )
+		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) && ($pxl.isUndefined(inst.allowMultiple) || inst.allowMultiple === false) )
 		{
 			$pxl.ajax.requests[inst.url].abort();
 		}

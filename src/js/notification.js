@@ -14,6 +14,10 @@ pxlCore_Notification.prototype =
 	default_engine_id: null,
 	current_engine_id: null,
 
+	/**
+     * Initialize pxlCore/Notification.
+     * @param {string} $pxl - pxlCore object reference.
+     */
 	init: function($pxl)
 	{
 		var self = this;
@@ -82,11 +86,22 @@ pxlCore_Notification.prototype =
 		}
 	},
 
+	/**
+	 * Set engine.
+	 * @param {string} engine_id Engine to switch to.
+	 * @returns {string}
+	 */
 	setEngine: function(engine_id)
 	{
 		this.current_engine_id = engine_id;
 	},
 
+	/**
+	 * Prepare engine before showing notification.
+	 * @param {object} options Options.
+	 * @param {type} type Type.
+	 * @returns {boolean}
+	 */
 	prepare: function(options, type)
 	{
 		var self = this;
@@ -134,11 +149,18 @@ pxlCore_Notification.prototype =
 		return true;
 	},
 
-	finalize: function()
+	/**
+	 * Reset engine after showing notification.
+	 */
+	reset: function()
 	{
 		this.setEngine(this.default_engine_id);
 	},
 
+	/**
+	 * Show success notification.
+	 * @param {object} options Options.
+	 */
 	showSuccess: function(options)
 	{
 		var self = this;
@@ -150,9 +172,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showSuccess(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show info notification.
+	 * @param {object} options Options.
+	 */
 	showInfo: function(options)
 	{
 		var self = this;
@@ -164,9 +190,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showInfo(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show warning notification.
+	 * @param {object} options Options.
+	 */
 	showWarning: function(options)
 	{
 		var self = this;
@@ -178,9 +208,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showWarning(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show error notification.
+	 * @param {object} options Options.
+	 */
 	showError: function(options)
 	{
 		var self = this;
@@ -192,9 +226,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showError(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show confirmation notification.
+	 * @param {object} options Options.
+	 */
 	showConfirm: function(options)
 	{
 		var self = this;
@@ -206,9 +244,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showConfirm(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show notification.
+	 * @param {object} options Options.
+	 */
 	show: function(options)
 	{
 		var self = this;
@@ -261,6 +303,6 @@ pxlCore_Notification.prototype =
 			self.engines[self.current_engine_id].showError(options);
 		}
 
-		self.finalize();
+		self.reset();
 	}
 };

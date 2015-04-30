@@ -82,6 +82,8 @@ pxlCore_Ajax.prototype =
 		}
 
 		request.execute();
+
+		return request;
 	},
 
 	post: function(url, data, callbacks, extra)
@@ -140,5 +142,7 @@ pxlCore_Ajax.prototype =
 		}
 
 		request.execute();
+
+		return request;
 	}
 };

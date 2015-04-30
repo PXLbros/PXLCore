@@ -9,7 +9,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.27',
+	version: '1.0.28',
 
 	options:
 	{
@@ -31,6 +31,11 @@ pxlCore.prototype =
 
 	libraries: [],
 
+	/**
+	 * Initialize pxlCore.
+	 *
+	 * @param {object} options - Initialization options.
+	 */
 	init: function(options)
 	{
 		var self = this;
@@ -76,6 +81,9 @@ pxlCore.prototype =
 		self.form = new pxlCore_Form(self);
 	},
 
+	/**
+     * Detect if pxlFramework exist.
+     */
 	detectPXLFramework: function()
 	{
 		var self = this;
@@ -86,6 +94,12 @@ pxlCore.prototype =
 		}
 	},
 
+	/**
+     * Log message to console.
+	 * @param {string} text - Text to show.
+	 * @param {string} background_color - Background color.
+	 * @param {string} color - Text color.
+     */
 	log: function(text, background_color, color)
 	{
 		var style = '';

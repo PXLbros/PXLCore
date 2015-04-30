@@ -129,6 +129,10 @@ pxlCore_Notification.prototype =
 	default_engine_id: null,
 	current_engine_id: null,
 
+	/**
+     * Initialize pxlCore/Notification.
+     * @param {string} $pxl - pxlCore object reference.
+     */
 	init: function($pxl)
 	{
 		var self = this;
@@ -197,11 +201,22 @@ pxlCore_Notification.prototype =
 		}
 	},
 
+	/**
+	 * Set engine.
+	 * @param {string} engine_id Engine to switch to.
+	 * @returns {string}
+	 */
 	setEngine: function(engine_id)
 	{
 		this.current_engine_id = engine_id;
 	},
 
+	/**
+	 * Prepare engine before showing notification.
+	 * @param {object} options Options.
+	 * @param {type} type Type.
+	 * @returns {boolean}
+	 */
 	prepare: function(options, type)
 	{
 		var self = this;
@@ -249,11 +264,18 @@ pxlCore_Notification.prototype =
 		return true;
 	},
 
-	finalize: function()
+	/**
+	 * Reset engine after showing notification.
+	 */
+	reset: function()
 	{
 		this.setEngine(this.default_engine_id);
 	},
 
+	/**
+	 * Show success notification.
+	 * @param {object} options Options.
+	 */
 	showSuccess: function(options)
 	{
 		var self = this;
@@ -265,9 +287,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showSuccess(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show info notification.
+	 * @param {object} options Options.
+	 */
 	showInfo: function(options)
 	{
 		var self = this;
@@ -279,9 +305,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showInfo(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show warning notification.
+	 * @param {object} options Options.
+	 */
 	showWarning: function(options)
 	{
 		var self = this;
@@ -293,9 +323,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showWarning(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show error notification.
+	 * @param {object} options Options.
+	 */
 	showError: function(options)
 	{
 		var self = this;
@@ -307,9 +341,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showError(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show confirmation notification.
+	 * @param {object} options Options.
+	 */
 	showConfirm: function(options)
 	{
 		var self = this;
@@ -321,9 +359,13 @@ pxlCore_Notification.prototype =
 
 		self.engines[self.current_engine_id].showConfirm(options);
 
-		self.finalize();
+		self.reset();
 	},
 
+	/**
+	 * Show notification.
+	 * @param {object} options Options.
+	 */
 	show: function(options)
 	{
 		var self = this;
@@ -376,7 +418,7 @@ pxlCore_Notification.prototype =
 			self.engines[self.current_engine_id].showError(options);
 		}
 
-		self.finalize();
+		self.reset();
 	}
 };
 /**
@@ -459,7 +501,7 @@ pxlCore_Ajax_Request.prototype =
 			return;
 		}
 
-		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) )
+		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) && ($pxl.isUndefined(inst.allowMultiple) || inst.allowMultiple === false) )
 		{
 			$pxl.ajax.requests[inst.url].abort();
 		}
@@ -647,6 +689,8 @@ pxlCore_Ajax.prototype =
 		}
 
 		request.execute();
+
+		return request;
 	},
 
 	post: function(url, data, callbacks, extra)
@@ -705,6 +749,8 @@ pxlCore_Ajax.prototype =
 		}
 
 		request.execute();
+
+		return request;
 	}
 };
 /**
@@ -774,7 +820,7 @@ pxlCore_Form_FileUpload.prototype =
 	$pxl: null,
 
 	save_url: null,
-	additional_data: null,
+	additional_data: {},
 
 	files: [],
 	num_files: 0,
@@ -788,6 +834,9 @@ pxlCore_Form_FileUpload.prototype =
 
 	events: null,
 
+	is_uploading: false,
+	cancelled: false,
+
 	_init: function($pxl)
 	{
 		var self = this;
@@ -800,7 +849,7 @@ pxlCore_Form_FileUpload.prototype =
 		var self = this;
 
 		self.save_url = save_url;
-		self.additional_data = additional_data;
+		self.additional_data = ($pxl.isObject(additional_data) ? additional_data : {});
 
 		self.allowed_mime_types = allowed_mime_types;
 		self.events = events;
@@ -843,10 +892,8 @@ pxlCore_Form_FileUpload.prototype =
 	{
 		var self = this;
 
-		if ( $pxl.options.debug === true )
-		{
-			$pxl.log('Processing file ' + (self.num_processed_files + 1) + ' of ' + self.num_files_without_error + '...');
-		}
+		self.cancelled = false;
+		self.is_uploading = true;
 
 		self.processQueueFile();
 	},
@@ -859,6 +906,11 @@ pxlCore_Form_FileUpload.prototype =
 
 		var postSave = function(_file, error)
 		{
+			if ( self.cancelled === true )
+			{
+				return;
+			}
+
 			if ( $pxl.isFunction(self.events.onFileComplete) )
 			{
 				self.events.onFileComplete(
@@ -890,6 +942,8 @@ pxlCore_Form_FileUpload.prototype =
 				}
 
 				pxl_file_upload.clearQueue();
+
+				self.is_uploading = false;
 			}
 		};
 
@@ -905,10 +959,15 @@ pxlCore_Form_FileUpload.prototype =
 
 		if ( file.error === false )
 		{
+			var additional_data = self.additional_data;
+			additional_data.PXL_ORIGINAL_FILENAME = file.file.name;
+			additional_data.PXL_SIZE = file.file.size;
+			additional_data.PXL_MIME = file.file.type;
+
 			$pxl.ajax.post
 			(
 				self.save_url,
-				file,
+				file.file,
 				{
 					progress: function(percent)
 					{
@@ -940,22 +999,25 @@ pxlCore_Form_FileUpload.prototype =
 					},
 					error: function(error)
 					{
-						if ( $pxl.isFunction(self.events.onFileError) )
+						if ( self.cancelled === false )
 						{
-							self.events.onFileError(
+							if ( $pxl.isFunction(self.events.onFileError) )
 							{
-								file: file,
-								file_index: self.num_processed_files,
-								error: error
-							});
-						}
+								self.events.onFileError(
+								{
+									file: file,
+									file_index: self.num_processed_files,
+									error: error
+								});
+							}
 
-						postSave(file, error);
+							postSave(file, error);
+						}
 					}
 				},
 				{
 					file_upload: true,
-					file_upload_data: self.additional_data
+					file_upload_data: additional_data
 				}
 			);
 		}
@@ -1050,6 +1112,36 @@ pxlCore_Form_FileUpload.prototype =
 		}
 
 		self.num_files = self.files.length;
+	},
+
+	cancel: function()
+	{
+		var self = this;
+
+		if ( self.is_uploading === false )
+		{
+			return;
+		}
+
+		self.cancelled = true;
+
+		if ( !$pxl.isUndefined($pxl.ajax.requests[self.save_url]) )
+		{
+			$pxl.ajax.requests[self.save_url].abort();
+		}
+
+		self.is_uploading = false;
+
+		if ( $pxl.isFunction(self.events.onCancel) )
+		{
+			self.events.onCancel(
+			{
+				file: self.files[self.num_processed_files],
+				file_index: self.num_processed_files
+			});
+		}
+
+		self.clearQueue();
 	}
 };
 /**
@@ -1093,7 +1185,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.27',
+	version: '1.0.28',
 
 	options:
 	{
@@ -1115,6 +1207,11 @@ pxlCore.prototype =
 
 	libraries: [],
 
+	/**
+	 * Initialize pxlCore.
+	 *
+	 * @param {object} options - Initialization options.
+	 */
 	init: function(options)
 	{
 		var self = this;
@@ -1160,6 +1257,9 @@ pxlCore.prototype =
 		self.form = new pxlCore_Form(self);
 	},
 
+	/**
+     * Detect if pxlFramework exist.
+     */
 	detectPXLFramework: function()
 	{
 		var self = this;
@@ -1170,6 +1270,12 @@ pxlCore.prototype =
 		}
 	},
 
+	/**
+     * Log message to console.
+	 * @param {string} text - Text to show.
+	 * @param {string} background_color - Background color.
+	 * @param {string} color - Text color.
+     */
 	log: function(text, background_color, color)
 	{
 		var style = '';
