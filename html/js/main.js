@@ -1,1 +1,0 @@
-$('.menu').find('.item').tab();
