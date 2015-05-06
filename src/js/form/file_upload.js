@@ -311,7 +311,7 @@ pxlCore_Form_FileUpload.prototype =
 	{
 		var self = this;
 
-		if ( self.is_uploading === false )
+		if ( self.num_files === 0 )
 		{
 			return;
 		}
@@ -323,6 +323,8 @@ pxlCore_Form_FileUpload.prototype =
 			$pxl.ajax.requests[self.save_url].abort();
 		}
 
+		var was_uploading = (self.is_uploading === true);
+
 		self.is_uploading = false;
 
 		if ( $pxl.isFunction(self.events.onCancel) )
@@ -330,7 +332,8 @@ pxlCore_Form_FileUpload.prototype =
 			self.events.onCancel(
 			{
 				file: self.files[self.num_processed_files],
-				file_index: self.num_processed_files
+				file_index: self.num_processed_files,
+				was_uploading: was_uploading
 			});
 		}
 

@@ -1,7 +1,3 @@
-/**
- * pxlCore
- * @constructor
- */
 function pxlCore(options)
 {
 	this.init(options);
@@ -9,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.28',
+	version: '1.0.29',
 
 	options:
 	{
@@ -31,11 +27,6 @@ pxlCore.prototype =
 
 	libraries: [],
 
-	/**
-	 * Initialize pxlCore.
-	 *
-	 * @param {object} options - Initialization options.
-	 */
 	init: function(options)
 	{
 		var self = this;

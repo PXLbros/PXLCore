@@ -1,0 +1,7 @@
+{
+  "name": "pxlCore",
+  "dependencies":
+  {
+    "semantic": "latest"
+  }
+}

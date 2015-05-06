@@ -6,14 +6,12 @@ var gulp = require('gulp'),
 	util = require('gulp-util'),
 	concat = require('gulp-concat'),
 	minifyCSS = require('gulp-minify-css'),
-	rename = require('gulp-rename'),
-	jsdoc = require('gulp-jsdoc');
+	rename = require('gulp-rename');
 
 var SRC_DIR = 'src/',
 	JS_DIR = SRC_DIR + 'js/',
 	SASS_DIR = SRC_DIR + 'sass/',
-	DIST_DIR = 'dist/',
-	DOCS_DIR = 'docs/';
+	DIST_DIR = 'dist/';
 
 gulp.task('compass', function()
 {
@@ -54,28 +52,22 @@ gulp.task('lint', function()
 gulp.task('concat', function()
 {
 	return gulp.src(
-		[
-			JS_DIR + 'notification/engines/sweetalert.js',
-			JS_DIR + 'notification/engines/notiny.js',
-			JS_DIR + 'notification/engine.js',
-			JS_DIR + 'notification.js',
-			JS_DIR + 'dialog.js',
-			JS_DIR + 'ajax/request.js',
-			JS_DIR + 'ajax.js',
-			JS_DIR + 'ui.js',
-			JS_DIR + 'uri.js',
-			JS_DIR + 'form/file_upload.js',
-			JS_DIR + 'form.js',
-			JS_DIR + 'pxlcore.js'
-		])
-		.pipe(concat('pxlcore.js'))
-		.pipe(gulp.dest(DIST_DIR));
-});
-
-gulp.task('jsdoc', function()
-{
-	gulp.src(DIST_DIR + 'pxlcore.js')
-        .pipe(jsdoc(DOCS_DIR))
+	[
+		JS_DIR + 'notification/engines/sweetalert.js',
+		JS_DIR + 'notification/engines/notiny.js',
+		JS_DIR + 'notification/engine.js',
+		JS_DIR + 'notification.js',
+		JS_DIR + 'dialog.js',
+		JS_DIR + 'ajax/request.js',
+		JS_DIR + 'ajax.js',
+		JS_DIR + 'ui.js',
+		JS_DIR + 'uri.js',
+		JS_DIR + 'form/file_upload.js',
+		JS_DIR + 'form.js',
+		JS_DIR + 'pxlcore.js'
+	])
+	.pipe(concat('pxlcore.js'))
+	.pipe(gulp.dest(DIST_DIR));
 });
 
 gulp.task('uglify', function()
@@ -93,7 +85,6 @@ gulp.task('watch', function()
 {
 	gulp.watch(SASS_DIR + '**/*.scss', ['compass', 'minify-css']);
 	gulp.watch(JS_DIR + '**/*.js', ['lint', 'concat', 'uglify']);
-	gulp.watch(DIST_DIR + 'pxlcore.js', ['jsdoc']);
 });
 
-gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'jsdoc', 'uglify', 'watch']);
+gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'uglify', 'watch']);
