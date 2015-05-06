@@ -253,6 +253,16 @@ pxlCore_Form_FileUpload.prototype =
 		return this.files;
 	},
 
+	getFile: function(index)
+	{
+		if ( $pxl.isUndefined(this.files[index]) )
+		{
+			return null;
+		}
+
+		return this.files[index];
+	},
+
 	clearQueue: function()
 	{
 		var self = this;

@@ -20,14 +20,12 @@ pxlCore_UI.prototype =
 
 	onAnimationComplete: function(element, callback)
 	{
-		var self = this;
-
 		if ( element === null )
 		{
 			return;
 		}
 
-		if ( !self.$pxl.isFunction(callback) )
+		if ( !$pxl.isFunction(callback) )
 		{
 			return;
 		}
@@ -40,14 +38,12 @@ pxlCore_UI.prototype =
 
 	onTransitionComplete: function(element, callback)
 	{
-		var self = this;
-
 		if ( element === null )
 		{
 			return;
 		}
 
-		if ( !self.$pxl.isFunction(callback) )
+		if ( !$pxl.isFunction(callback) )
 		{
 			return;
 		}
