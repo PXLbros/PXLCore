@@ -42,6 +42,6 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 			showCancelButton: true,
 			confirmButtonText: (typeof options.buttons === 'object' && typeof options.buttons.yes === 'string' ? options.buttons.yes : 'Yes'),
 			cancelButtonText: (typeof options.buttons === 'object' && typeof options.buttons.no === 'string' ? options.buttons.no : 'No')
-		}, (typeof options.yes === 'function' ? options.yes : function() {}));
+		}, (typeof options.onConfirm === 'function' ? options.onConfirm : function() {}));
 	}
 };
