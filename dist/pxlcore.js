@@ -42,7 +42,7 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 			showCancelButton: true,
 			confirmButtonText: (typeof options.buttons === 'object' && typeof options.buttons.yes === 'string' ? options.buttons.yes : 'Yes'),
 			cancelButtonText: (typeof options.buttons === 'object' && typeof options.buttons.no === 'string' ? options.buttons.no : 'No')
-		}, (typeof options.yes === 'function' ? options.yes : function() {}));
+		}, (typeof options.onConfirm === 'function' ? options.onConfirm : function() {}));
 	}
 };
 /**
@@ -771,6 +771,43 @@ pxlCore_UI.prototype =
 		{
 			$pxl.log('~ pxlCore/UI ~', '#CCC', 'black');
 		}
+	},
+
+	onAnimationComplete: function(element, callback)
+	{
+		if ( element === null )
+		{
+			return;
+		}
+
+		if ( !$pxl.isFunction(callback) )
+		{
+			return;
+		}
+
+		element.addEventListener('webkitAnimationEnd', callback, false);
+		element.addEventListener('oAnimationEnd', callback, false);
+		element.addEventListener('msAnimationEnd', callback, false);
+		element.addEventListener('animationend', callback, false);
+	},
+
+	onTransitionComplete: function(element, callback)
+	{
+		if ( element === null )
+		{
+			return;
+		}
+
+		if ( !$pxl.isFunction(callback) )
+		{
+			return;
+		}
+
+		element.addEventListener('webkitTransitionEnd', callback, false);
+		element.addEventListener('otransitionend', callback, false);
+		element.addEventListener('oTransitionEnd', callback, false);
+		element.addEventListener('msTransitionEnd', callback, false);
+		element.addEventListener('transitionend', callback, false);
 	}
 };
 /**
@@ -1060,6 +1097,16 @@ pxlCore_Form_FileUpload.prototype =
 		return this.files;
 	},
 
+	getFile: function(index)
+	{
+		if ( $pxl.isUndefined(this.files[index]) )
+		{
+			return null;
+		}
+
+		return this.files[index];
+	},
+
 	clearQueue: function()
 	{
 		var self = this;
@@ -1118,7 +1165,7 @@ pxlCore_Form_FileUpload.prototype =
 	{
 		var self = this;
 
-		if ( self.is_uploading === false )
+		if ( self.num_files === 0 )
 		{
 			return;
 		}
@@ -1130,6 +1177,8 @@ pxlCore_Form_FileUpload.prototype =
 			$pxl.ajax.requests[self.save_url].abort();
 		}
 
+		var was_uploading = (self.is_uploading === true);
+
 		self.is_uploading = false;
 
 		if ( $pxl.isFunction(self.events.onCancel) )
@@ -1137,7 +1186,8 @@ pxlCore_Form_FileUpload.prototype =
 			self.events.onCancel(
 			{
 				file: self.files[self.num_processed_files],
-				file_index: self.num_processed_files
+				file_index: self.num_processed_files,
+				was_uploading: was_uploading
 			});
 		}
 
@@ -1174,10 +1224,6 @@ pxlCore_Form.prototype =
 		self.file_upload = new pxlCore_Form_FileUpload($pxl);
 	}
 };
-/**
- * pxlCore
- * @constructor
- */
 function pxlCore(options)
 {
 	this.init(options);
@@ -1185,7 +1231,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.28',
+	version: '1.0.33',
 
 	options:
 	{
@@ -1207,11 +1253,6 @@ pxlCore.prototype =
 
 	libraries: [],
 
-	/**
-	 * Initialize pxlCore.
-	 *
-	 * @param {object} options - Initialization options.
-	 */
 	init: function(options)
 	{
 		var self = this;
