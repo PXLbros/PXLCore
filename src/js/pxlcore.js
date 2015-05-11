@@ -5,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.34',
+	version: '1.0.35',
 
 	options:
 	{
@@ -20,7 +20,7 @@ pxlCore.prototype =
 
 	ui: null,
 	ajax: null,
-	dialog: null,
+	modal: null,
 	notification: null,
 	uri: null,
 	form: null,
@@ -59,8 +59,8 @@ pxlCore.prototype =
 		// Ajax
 		self.ajax = new pxlCore_Ajax(self);
 
-		// Dialog
-		self.dialog = new pxlCore_Dialog(self);
+		// Modal
+		self.modal = new pxlCore_Modal(self);
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);

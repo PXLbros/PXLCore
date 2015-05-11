@@ -57,7 +57,7 @@ gulp.task('concat', function()
 		JS_DIR + 'notification/engines/notiny.js',
 		JS_DIR + 'notification/engine.js',
 		JS_DIR + 'notification.js',
-		JS_DIR + 'dialog.js',
+		JS_DIR + 'modal.js',
 		JS_DIR + 'ajax/request.js',
 		JS_DIR + 'ajax.js',
 		JS_DIR + 'ui.js',

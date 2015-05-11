@@ -422,28 +422,40 @@ pxlCore_Notification.prototype =
 	}
 };
 /**
- * pxlCore/Dialog
+ * pxlCore/Modal
  * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
-function pxlCore_Dialog($pxl)
+function pxlCore_Modal($pxl)
 {
 	this.init($pxl);
 }
 
-pxlCore_Dialog.prototype =
+pxlCore_Modal.prototype =
 {
+	default_options:
+	{
+		width: 320,
+		height: 240,
+		modal: true,
+		autoOpen: false
+	},
+
 	init: function($pxl)
 	{
 		if ( $pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Dialog ~', '#CCC', 'black');
+			$pxl.log('~ pxlCore/Modal ~', '#CCC', 'black');
 		}
 	},
 
-	init_from_element: function(selector, options)
+	initFromElement: function(selector, options)
 	{
 		console.log('init from element');
+	},
+
+	initFromHTML: function(html, options)
+	{
 	}
 };
 /**
@@ -1231,7 +1243,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.34',
+	version: '1.0.35',
 
 	options:
 	{
@@ -1246,7 +1258,7 @@ pxlCore.prototype =
 
 	ui: null,
 	ajax: null,
-	dialog: null,
+	modal: null,
 	notification: null,
 	uri: null,
 	form: null,
@@ -1285,8 +1297,8 @@ pxlCore.prototype =
 		// Ajax
 		self.ajax = new pxlCore_Ajax(self);
 
-		// Dialog
-		self.dialog = new pxlCore_Dialog(self);
+		// Modal
+		self.modal = new pxlCore_Modal(self);
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);
