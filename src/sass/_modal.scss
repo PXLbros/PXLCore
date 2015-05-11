@@ -1,0 +1,88 @@
+.pxl-modal
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	background-color: #FFF;
+	z-index: 1001;
+
+	@include x-border-radius(3px);
+	@include x-box-shadow(0 0 12px rgba(0, 0, 0, .4));
+
+	@include x-transform(scale(0));
+
+	&.open
+	{
+		@include x-transform(scale(1));
+		@include x-animation(showPxlModal .3s);
+	}
+
+	&.close
+	{
+  		@include x-animation(hidePxlModal .3s);
+	}
+
+	&.loading
+	{
+		.pxl-modal-loader-container
+		{
+			display: block;
+		}
+
+		.pxl-modal-content
+		{
+			display: none;
+		}
+	}
+
+	.pxl-modal-loader-container
+	{
+		display: none;
+		margin: 0;
+
+		@include x-box-shadow(none);
+	}
+
+	.pxl-modal-header
+	{
+		font-weight: bold;
+		overflow: auto;
+  		zoom: 1;
+	}
+
+	.pxl-modal-header-title
+	{
+		float: left;
+	}
+
+	.pxl-modal-header-buttons
+	{
+		float: right;
+
+		a
+		{
+			color: #000;
+		}
+	}
+
+	.pxl-modal-content
+	{
+		&.error
+		{
+			text-align: center;
+		}
+	}
+
+	.pxl-modal-buttons-container
+	{
+		position: relative;
+		text-align: right;
+	}
+
+	.pxl-modal-buttons
+	{
+		position: absolute;
+		bottom: 0;
+		right: 0;
+	}
+}

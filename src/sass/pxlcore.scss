@@ -1,3 +1,6 @@
+@import '../../bower_components/sass-mediaqueries/media-queries';
+@import '../../bower_components/sass-mixins/mixins';
+
 %clearfix
 {
 	&:after
@@ -7,3 +10,5 @@
 		clear: both;
 	}
 }
+
+@import 'modal';
