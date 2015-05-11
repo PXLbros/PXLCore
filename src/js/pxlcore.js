@@ -5,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.33',
+	version: '1.0.34',
 
 	options:
 	{
@@ -220,5 +220,13 @@ pxlCore.prototype =
 		}
 
 		return pieces;
+	},
+
+	openPopup: function(url, width, height)
+	{
+		var top_position = ($(window).height() / 2) - (height / 2),
+			left_position = ($(window).width() / 2) - (width / 2);
+
+		window.open(url, 'pxl-popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,top=' + top_position + ',left=' + left_position + ',width=' + width + ',height=' + height);
 	}
 };

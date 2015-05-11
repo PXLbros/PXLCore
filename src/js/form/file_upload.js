@@ -153,9 +153,9 @@ pxlCore_Form_FileUpload.prototype =
 		if ( file.error === false )
 		{
 			var additional_data = self.additional_data;
-			additional_data.PXL_ORIGINAL_FILENAME = file.file.name;
-			additional_data.PXL_SIZE = file.file.size;
-			additional_data.PXL_MIME = file.file.type;
+			additional_data['X-Pxl-Original-Filename'] = file.file.name;
+			additional_data['X-Pxl-Size'] = file.file.size;
+			additional_data['X-Pxl-Mime'] = file.file.type;
 
 			$pxl.ajax.post
 			(
