@@ -1,13 +1,14 @@
 {
   "name": "pxlCore",
-  "version": "1.0.37",
+  "version": "1.0.38",
   "homepage": "https://github.com/PXLbros/pxlCore",
   "main": "pxlcore.js",
   "ignore":
   [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "src"
   ],
   "dependencies":
   {
