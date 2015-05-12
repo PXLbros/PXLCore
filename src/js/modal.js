@@ -12,6 +12,7 @@ pxlCore_Modal.prototype =
 {
 	default_options:
 	{
+		title: null,
 		width: 320,
 		height: 240,
 		modal: true,
@@ -21,7 +22,11 @@ pxlCore_Modal.prototype =
 		headerHeight: 40,
 		buttonsContainerHeight: 40,
 		buttons: [],
-		modes: null
+		getURL: null,
+		getData: null,
+		loadingText: 'Loading',
+		modes: null,
+		afterLoaded: null
 	},
 
 	modals: {},
@@ -73,16 +78,11 @@ pxlCore_Modal.prototype =
 			default_line_height: null,
 			mode: null,
 			options: options,
-			open: function(mode)
+			setLoaderText: function(text)
 			{
 				var _modal = this;
 
-				_modal.showLoader(_modal.options.loadingText);
-
-				_modal.$modal.classList.add('open');
-				$('body').append(_modal.$modal);
-
-				alert('we');
+				_modal.$loader_text.innerHTML = text;
 			},
 			showLoader: function(text)
 			{
@@ -95,8 +95,198 @@ pxlCore_Modal.prototype =
 
 				_modal.$modal.classList.add('loading');
 				_modal.$content.style.lineHeight = _modal.$content.style.height;
-				_modal.$loader_text.innerHTML = text;
+
+				_modal.setLoaderText(text);
+
 				_modal.$loader.style.display = 'block';
+			},
+			hideLoader: function()
+			{
+				var _modal = this;
+
+				_modal.$modal.classList.remove('loading');
+				_modal.$loader.style.display = 'none';
+			},
+			getButtons: function()
+			{
+				var _modal = this;
+
+				if ( _modal.options.modes !== null )
+				{
+				}
+				else
+				{
+					return _modal.options.buttons;
+				}
+			},
+			enableButtons: function(exclude_save_buttons)
+			{
+				var _modal = this;
+
+				if ( typeof exclude_save_buttons !== 'boolean' )
+				{
+					exclude_save_buttons = false;
+				}
+
+				var buttons = _modal.getButtons();
+
+				for ( var button_key in buttons )
+				{
+					if ( buttons.hasOwnProperty(button_key) )
+					{
+						var button = buttons[button_key];
+
+						if ( exclude_save_buttons === false || (exclude_save_buttons === true && typeof button.save !== 'undefined' && button.save === false)  )
+						{
+							//button.classList.remove('disabled');
+							$(button.selector).removeClass('disabled');
+						}
+					}
+				}
+			},
+			disableButtons: function(only_save_buttons)
+			{
+				var _modal = this;
+
+				if ( typeof only_save_buttons !== 'boolean' )
+				{
+					only_save_buttons = false;
+				}
+
+				var buttons = _modal.getButtons();
+
+				for ( var button_key in buttons )
+				{
+					if ( buttons.hasOwnProperty(button_key) )
+					{
+						var button = buttons[button_key];
+
+						if ( only_save_buttons === false || (only_save_buttons && (typeof button.save !== 'undefined' && button.save === true)) )
+						{
+							$(button.selector).addClass('disabled');
+						}
+						else
+						{
+							$(button.selector).removeClass('disabled');
+						}
+					}
+				}
+			},
+			open: function(mode)
+			{
+				var _modal = this;
+
+				_modal.showLoader(_modal.options.loadingText);
+
+				_modal.$modal.classList.add('open');
+				document.body.appendChild(_modal.$modal);
+
+				// Create buttons
+				var buttons = _modal.getButtons();
+
+				var buttons_html = '',
+					button_key,
+					button;
+
+				for ( button_key in buttons )
+				{
+					if ( buttons.hasOwnProperty(button_key) )
+					{
+						button = buttons[button_key];
+
+						buttons_html += button.html;
+					}
+				}
+
+				_modal.$buttons.innerHTML = buttons_html;
+
+				// Attach click event to buttons
+				for ( button_key in buttons )
+				{
+					if ( buttons.hasOwnProperty(button_key) )
+					{
+						button = buttons[button_key];
+
+						if ( $pxl.isFunction(button.click) )
+						{
+							(function(button)
+							{
+								$(button.selector).on('click', function()
+								{
+									if ( button.click(button) === false )
+									{
+										return;
+									}
+								});
+							})(button);
+						}
+					}
+				}
+
+				self.current_modal_id = _modal.id;
+
+				$pxl.ajax.get
+				(
+					_modal.options.getURL,
+					_modal.options.getData,
+					{
+						success: function(result)
+						{
+							_modal.$content.innerHTML = result.data.html;
+
+							_modal.hideLoader();
+							_modal.enableButtons();
+
+							if ( $pxl.isFunction(_modal.options.afterLoaded) )
+							{
+								_modal.options.afterLoaded(true, result);
+							}
+						},
+						error: function(result)
+						{
+							_modal.hideLoader();
+							_modal.enableButtons(true);
+
+							if ( $pxl.isFunction(_modal.options.afterLoaded) )
+							{
+								_modal.options.afterLoaded(false, result);
+							}
+						}
+					}
+				);
+			},
+			close: function()
+			{
+				var _modal = this;
+
+				_modal.$modal.classList.add('close');
+				_modal.$modal.classList.remove('open');
+
+				// $pxl.ui.onAnimationComplete(_modal.selector, function()
+				$(_modal.selector).one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function()
+				{
+					_modal.$modal.classList.remove('close');
+					_modal.$content.classList.remove('error');
+
+					$(_modal.selector).remove();
+				});
+
+				/*if ( dialog_inst.options.modal === true )
+				{
+					inst.$mask.removeClass('open').addClass('close');
+					inst.$mask.one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function()
+					{
+						if ( inst.$mask === null )
+						{
+							return;
+						}
+
+						inst.$mask.remove();
+						inst.$mask = null;
+					});
+				}*/
+
+				_modal.current_modal_id = null;
 			}
 		};
 
@@ -155,12 +345,48 @@ pxlCore_Modal.prototype =
 			button.selector = '#pxl-modal-' + modal.id + '-button-' + (button_index + 1),
 			button.html = '<a href="javascript:" id="' + button.selector.substring(1) + '" class="ui button tiny disabled">' + button.text + '</a>';
 
-			(function(button, button_index)
+			(function(button)
 			{
 				button.setText = function()
 				{
+					$(button.selector).html(text);
+
+					return button;
 				};
-			})(button, button_index);
+
+				button.setLoadingText = function()
+				{
+					button.setText(button.loadingText);
+				};
+
+				button.enable = function()
+				{
+					$(button.selector).removeClass('disabled');
+
+					return button;
+				};
+
+				button.disable = function()
+				{
+					$(button.selector).addClass('disabled');
+
+					return button;
+				};
+
+				button.spin = function()
+				{
+					$(button.selector).addClass('loading');
+
+					return button;
+				};
+
+				button.stopSpin = function()
+				{
+					$(button.selector).removeClass('loading');
+
+					return button;
+				};
+			})(button);
 
 			return button;
 		};
@@ -201,6 +427,12 @@ pxlCore_Modal.prototype =
 		modal.$modal = $modal;
 
 		self.modals[modal.id] = modal;
+
+		// Auto open
+		if ( modal.options.autoOpen === true )
+		{
+			modal.open();
+		}
 
 		return modal;
 	}
