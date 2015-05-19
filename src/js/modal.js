@@ -234,6 +234,8 @@ pxlCore_Modal.prototype =
 						{
 							_modal.$content.innerHTML = result.data.html;
 
+							_modal.$content.style.lineHeight = _modal.default_line_height;
+
 							_modal.hideLoader();
 							_modal.enableButtons();
 

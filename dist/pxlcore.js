@@ -657,6 +657,8 @@ pxlCore_Modal.prototype =
 						{
 							_modal.$content.innerHTML = result.data.html;
 
+							_modal.$content.style.lineHeight = _modal.default_line_height;
+
 							_modal.hideLoader();
 							_modal.enableButtons();
 
@@ -1645,7 +1647,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.40',
+	version: '1.0.41',
 
 	options:
 	{
