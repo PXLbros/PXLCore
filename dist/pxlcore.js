@@ -753,8 +753,8 @@ pxlCore_Modal.prototype =
 
 		modal.$content = document.createElement('div');
 		modal.$content.className = 'pxl-modal-content';
-
 		modal.$content.style.height = content_height + 'px';
+		modal.$content.style.overflowY = 'auto';
 
 		modal.$buttons_container = document.createElement('div');
 		modal.$buttons_container.className = 'pxl-modal-buttons-container';
