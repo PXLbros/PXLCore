@@ -558,6 +558,15 @@
  *     @include x-user-select;
  *   }
  */
+/*%clearfix
+{
+	&:after
+	{
+		content: '';
+		display: table;
+		clear: both;
+	}
+}*/
 .pxl-modal {
   position: fixed;
   top: 50%;
