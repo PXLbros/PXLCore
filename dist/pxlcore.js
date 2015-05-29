@@ -1510,6 +1510,32 @@ pxlCore_Form_FileUpload.prototype =
 
 	getFiles: function()
 	{
+		var self = this;
+
+		var files = [];
+
+		for ( var i = 0; i < self.num_files; i++ )
+		{
+			var file = self.files[i];
+
+			files.push(
+			{
+				file:
+				{
+					name: file.file.name,
+					type: file.file.type,
+					size: file.file.size
+				},
+				error: file.error,
+				errors: file.errors
+			});
+		}
+
+		return files;
+	},
+
+	getFilesRaw: function()
+	{
 		return this.files;
 	},
 
@@ -1647,7 +1673,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.41',
+	version: '1.0.43',
 
 	options:
 	{
