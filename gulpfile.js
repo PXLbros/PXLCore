@@ -6,7 +6,8 @@ var gulp = require('gulp'),
 	util = require('gulp-util'),
 	concat = require('gulp-concat'),
 	minifyCSS = require('gulp-minify-css'),
-	rename = require('gulp-rename');
+	rename = require('gulp-rename'),
+	es6transpiler = require('gulp-es6-transpiler');
 
 var SRC_DIR = 'src/',
 	JS_DIR = SRC_DIR + 'js/',
@@ -81,10 +82,19 @@ gulp.task('uglify', function()
 		.pipe(gulp.dest(DIST_DIR));
 });
 
+gulp.task('es6', function()
+{
+    return gulp.src(SRC_DIR + 'js_es6/**/*.js')
+        .pipe(es6transpiler())
+        .pipe(gulp.dest(DIST_DIR + 'es6/'));
+});
+
 gulp.task('watch', function()
 {
 	gulp.watch(SASS_DIR + '**/*.scss', ['compass', 'minify-css']);
 	gulp.watch(JS_DIR + '**/*.js', ['lint', 'concat', 'uglify']);
+
+	gulp.watch(SRC_DIR + 'js_es6/**/*.js', ['es6']);
 });
 
-gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'uglify', 'watch']);
+gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'uglify', 'es6', 'watch']);

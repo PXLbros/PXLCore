@@ -11,6 +11,7 @@
     "gulp-concat": "*",
     "gulp-minify-css": "*",
     "gulp-rename": "*",
-    "gulp-jsdoc": "*"
+    "gulp-jsdoc": "*",
+    "gulp-es6-transpiler": "*"
   }
 }
