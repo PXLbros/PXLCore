@@ -35,11 +35,6 @@ pxlCore_Ajax_Request.prototype =
 		var self = this;
 
 		self.$pxl = $pxl;
-
-		if ( self.$pxl.options.debug === true )
-		{
-			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
-		}
 	},
 
 	execute: function()
