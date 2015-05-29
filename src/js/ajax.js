@@ -5,6 +5,11 @@
  */
 function pxlCore_Ajax($pxl)
 {
+	if ( $pxl.options.debug === true )
+	{
+		$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+	}
+
 	this.init($pxl);
 }
 
@@ -19,11 +24,6 @@ pxlCore_Ajax.prototype =
 		var self = this;
 
 		self.$pxl = $pxl;
-
-		if ( self.$pxl.options.debug === true )
-		{
-			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
-		}
 	},
 
 	get: function(url, data, callbacks, extra)

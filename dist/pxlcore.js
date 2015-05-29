@@ -1028,6 +1028,11 @@ pxlCore_Ajax_Request.prototype =
  */
 function pxlCore_Ajax($pxl)
 {
+	if ( $pxl.options.debug === true )
+	{
+		$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+	}
+
 	this.init($pxl);
 }
 
@@ -1042,11 +1047,6 @@ pxlCore_Ajax.prototype =
 		var self = this;
 
 		self.$pxl = $pxl;
-
-		if ( self.$pxl.options.debug === true )
-		{
-			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
-		}
 	},
 
 	get: function(url, data, callbacks, extra)
@@ -1534,11 +1534,6 @@ pxlCore_Form_FileUpload.prototype =
 		return files;
 	},
 
-	getFilesRaw: function()
-	{
-		return this.files;
-	},
-
 	getFile: function(index)
 	{
 		if ( $pxl.isUndefined(this.files[index]) )
@@ -1673,7 +1668,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.43',
+	version: '1.0.44',
 
 	options:
 	{

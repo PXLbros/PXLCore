@@ -274,11 +274,6 @@ pxlCore_Form_FileUpload.prototype =
 		return files;
 	},
 
-	getFilesRaw: function()
-	{
-		return this.files;
-	},
-
 	getFile: function(index)
 	{
 		if ( $pxl.isUndefined(this.files[index]) )
