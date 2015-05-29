@@ -7,5 +7,3 @@ var pxlCore = (function(){"use strict";var PRS$0 = (function(o,t){o["__proto__"]
 		this.options = 'hej';
 	}DP$0(pxlCore,"prototype",{"configurable":false,"enumerable":false,"writable":false});
 ;return pxlCore;})();
-
-export default pxlCore;

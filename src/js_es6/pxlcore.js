@@ -7,5 +7,3 @@ class pxlCore
 		this.options = 'hej';
 	}
 }
-
-export default pxlCore;
