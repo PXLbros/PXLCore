@@ -86,7 +86,7 @@ gulp.task('es6', function()
 {
     return gulp.src(SRC_DIR + 'js_es6/**/*.js')
         .pipe(es6transpiler())
-        .pipe(gulp.dest(DIST_DIR + 'es6/'));
+        .pipe(gulp.dest('html/js/es6/'));
 });
 
 gulp.task('watch', function()
