@@ -1008,7 +1008,7 @@ pxlCore_Ajax_Request.prototype =
 					inst.error(errorThrown);
 				}
 
-				if ( $pxl.options.debug === true )
+				if ( $pxl.options.debug === true && $pxl.isDefined(xhr.responseText) )
 				{
 					$pxl.notification.showError({ message: xhr.responseText, autoHide: false });
 				}
@@ -1663,7 +1663,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.47',
+	version: '1.0.48',
 
 	options:
 	{
