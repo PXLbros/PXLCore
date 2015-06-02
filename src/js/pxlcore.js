@@ -5,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.49',
+	version: '1.0.50',
 
 	options:
 	{
@@ -64,6 +64,15 @@ pxlCore.prototype =
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);
+
+		if ( self.framework !== null && typeof pxl_notification === 'object' )
+		{
+			self.notification.show(
+			{
+				type: pxl_notification.type,
+				message: pxl_notification.text
+			});
+		}
 
 		// URI
 		self.uri = new pxlCore_URI(self);
