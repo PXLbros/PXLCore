@@ -120,7 +120,9 @@ pxlCore_Notification_Engine_Notiny.prototype =
  */
 function pxlCore_Notification($pxl)
 {
-	this.init($pxl);
+	this.$pxl = $pxl;
+
+	this.init();
 }
 
 pxlCore_Notification.prototype =
@@ -133,13 +135,13 @@ pxlCore_Notification.prototype =
      * Initialize pxlCore/Notification.
      * @param {string} $pxl - pxlCore object reference.
      */
-	init: function($pxl)
+	init: function()
 	{
 		var self = this;
 
-		if ( $pxl.options.debug === true )
+		if ( self.$pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
+			self.$pxl.log('~ pxlCore/Notification ~', '#CCC', 'black');
 		}
 
 		var engine_index,
@@ -147,15 +149,15 @@ pxlCore_Notification.prototype =
 			engine_name,
 			engine;
 
-		for ( engine_index = 0, num_engines = $pxl.options.notification.engines.length; engine_index < num_engines; engine_index++ )
+		for ( engine_index = 0, num_engines = self.$pxl.options.notification.engines.length; engine_index < num_engines; engine_index++ )
 		{
-			engine_id = $pxl.options.notification.engines[engine_index];
+			engine_id = self.$pxl.options.notification.engines[engine_index];
 			engine_name = 'pxlCore_Notification_Engine_' + engine_id;
-			engine = new window[engine_name]($pxl);
+			engine = new window[engine_name](self.$pxl);
 
 			if ( engine.loaded === false )
 			{
-				$pxl.error('Could not load notification engine "' + engine_id + '".');
+				self.$pxl.error('Could not load notification engine "' + engine_id + '".');
 
 				continue;
 			}
@@ -168,14 +170,14 @@ pxlCore_Notification.prototype =
 			}
 		}
 
-		var num_loaded_engines = $pxl.getObjectSize(self.engines);
+		var num_loaded_engines = self.$pxl.getObjectSize(self.engines);
 
 		if ( self.default_engine_id !== null )
 		{
 			self.setEngine(self.default_engine_id);
 		}
 
-		if ( $pxl.options.debug === true )
+		if ( self.$pxl.options.debug === true )
 		{
 			var loaded_engines_debug_str = 'Loaded Engines: ';
 
@@ -195,9 +197,9 @@ pxlCore_Notification.prototype =
 				loaded_engines_debug_str += 'None';
 			}
 
-			$pxl.log(loaded_engines_debug_str);
+			self.$pxl.log(loaded_engines_debug_str);
 
-			$pxl.log('Default Engine: ' + (self.default_engine_id !== null ? self.default_engine_id : '/'));
+			self.$pxl.log('Default Engine: ' + (self.default_engine_id !== null ? self.default_engine_id : '/'));
 		}
 	},
 
@@ -225,7 +227,7 @@ pxlCore_Notification.prototype =
 		{
 			if ( typeof self.engines[options.engine] !== 'object' )
 			{
-				$pxl.error('pxlCore/Notification: Engine "' + options.engine + '" not found.');
+				self.$pxl.error('pxlCore/Notification: Engine "' + options.engine + '" not found.');
 
 				return false;
 			}
@@ -237,7 +239,7 @@ pxlCore_Notification.prototype =
 
 		if ( typeof current_engine['show' + type] !== 'function' )
 		{
-			$pxl.error('pxlCore/Notification: Engine "' + self.current_engine_id + '" doesn\'t support type "' + type + '".');
+			self.$pxl.error('pxlCore/Notification: Engine "' + self.current_engine_id + '" doesn\'t support type "' + type + '".');
 
 			return false;
 		}
@@ -246,7 +248,7 @@ pxlCore_Notification.prototype =
 		{
 			if ( typeof options.message === 'undefined' )
 			{
-				$pxl.error('pxlCore/Notification: Missing required argument "message".');
+				self.$pxl.error('pxlCore/Notification: Missing required argument "message".');
 
 				return false;
 			}
@@ -255,7 +257,7 @@ pxlCore_Notification.prototype =
 		{
 			if ( typeof options.question === 'undefined' )
 			{
-				$pxl.error('pxlCore/Notification: Missing required argument "question".');
+				self.$pxl.error('pxlCore/Notification: Missing required argument "question".');
 
 				return false;
 			}
@@ -372,7 +374,7 @@ pxlCore_Notification.prototype =
 
 		if ( typeof options.type === 'undefined' )
 		{
-			$pxl.error('pxlCore/Notification: Missing required argument "type".');
+			self.$pxl.error('pxlCore/Notification: Missing required argument "type".');
 
 			return false;
 		}
@@ -1663,7 +1665,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.49',
+	version: '1.0.51',
 
 	options:
 	{
@@ -1722,6 +1724,15 @@ pxlCore.prototype =
 
 		// Notification
 		self.notification = new pxlCore_Notification(self);
+
+		if ( self.framework !== null && typeof pxl_notification === 'object' )
+		{
+			self.notification.show(
+			{
+				type: pxl_notification.type,
+				message: pxl_notification.text
+			});
+		}
 
 		// URI
 		self.uri = new pxlCore_URI(self);
