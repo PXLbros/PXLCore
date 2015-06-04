@@ -65,6 +65,7 @@ gulp.task('concat', function()
 {
 	return gulp.src(
 	[
+		JS_DIR + 'dynamic_item.js',
 		JS_DIR + 'notification/engines/sweetalert.js',
 		JS_DIR + 'notification/engines/notiny.js',
 		JS_DIR + 'notification/engine.js',
