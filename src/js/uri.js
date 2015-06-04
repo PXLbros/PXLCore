@@ -20,13 +20,13 @@ pxlCore_URI.prototype =
 
 	urlize: function(url)
 	{
-		if ( $pxl.isUndefined($pxl.framework.base_url) )
+		if ( this.$pxl.isUndefined(this.$pxl.framework.base_url) )
 		{
-			$pxl.log('Base URL not set.');
+			this.$pxl.log('Base URL not set.');
 
 			return;
 		}
 
-		return $pxl.framework.base_url + url;
+		return this.$pxl.framework.base_url + url;
 	}
 };

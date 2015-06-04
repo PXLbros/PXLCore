@@ -20,9 +20,9 @@ pxlCore_Ajax.prototype =
 
 		self.$pxl = $pxl;
 
-		if ( $pxl.options.debug === true )
+		if ( self.$pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
 		}
 	},
 

@@ -40,34 +40,35 @@ pxlCore_DynamicItem.prototype =
 		}
 
 		self.$pxl = $pxl;
+
+		self.initTable();
 	},
 
 	initTable: function()
 	{
-		if ( typeof dynamic_item.table === 'object' )
+		var self = this;
+
+		self.table.$container = $(self.table.container_selector);
+
+		if ( self.table.$container.length === 0 )
 		{
-			this.table.$container = $(this.table.container_selector);
+			self.$pxl.log('Could not find dynamic table element "' + self.table.container_selector + '".');
 
-			if ( this.table.$container.length === 0 )
-			{
-				$pxl.log('Could not find dynamic table element "' + this.table.container_selector + '".');
-
-				return;
-			}
-
-			/*if ( typeof dynamic_item.table.urls === 'undefined' )
-			{
-				this.show_error();
-
-				$pxl.log('Required attribute "urls" is not defined.');
-
-				return;
-			}*/
-
-			this.table.loading_html = this.table.$container.html();
-
-			this.refreshTable(true);
+			return;
 		}
+
+		/*if ( typeof dynamic_item.table.urls === 'undefined' )
+		{
+			self.show_error();
+
+			self.$pxl.log('Required attribute "urls" is not defined.');
+
+			return;
+		}*/
+
+		self.table.loading_html = self.table.$container.html();
+
+		self.refreshTable(true);
 	},
 
 	refreshTable: function(init)
@@ -76,7 +77,7 @@ pxlCore_DynamicItem.prototype =
 
 		if ( init === false )
 		{
-			this.showTableLoader();
+			inst.showTableLoader();
 		}
 
 		var ajax_data = {};
@@ -91,32 +92,29 @@ pxlCore_DynamicItem.prototype =
 			ajax_data.search_query = inst.search_query;
 		}
 
-		/*$core.ajax.get
+		inst.$pxl.ajax.get
 		(
-			dynamic_table.urls.get,
+			dynamic_item.config.table.routes.get,
 			ajax_data,
 			{
 				success: function(result)
 				{
-					$(result.data.html).imagesLoaded().always(function()
+					inst.table.$container.html(result.data.html);
+
+					if ( dynamic_item.config.table.paging.enabled === true )
 					{
-						inst.$container.html(result.data.html);
+						inst.current_page = result.data.paging.current_page;
+						inst.num_pages = result.data.paging.num_pages;
+					}
 
-						if ( dynamic_table.paging.enabled === true )
-						{
-							inst.current_page = result.data.paging.current_page;
-							inst.num_pages = result.data.paging.num_pages;
-						}
-
-						inst.binds();
-					});
+					inst.binds();
 				},
 				error: function()
 				{
-					inst.show_error();
+					inst.showTableError();
 				}
 			}
-		);*/
+		);
 
 		alert('we');
 	},
@@ -129,5 +127,5 @@ pxlCore_DynamicItem.prototype =
 	showTableError: function()
 	{
 		this.table.$container.html('Could not load ' + dynamic_item.config.identifier.plural + '.');
-	},
+	}
 };

@@ -42,7 +42,7 @@ pxlCore_Form_FileUpload.prototype =
 		var self = this;
 
 		self.save_url = save_url;
-		self.additional_data = ($pxl.isObject(additional_data) ? additional_data : {});
+		self.additional_data = (self.$pxl.isObject(additional_data) ? additional_data : {});
 
 		self.allowed_mime_types = allowed_mime_types;
 		self.events = events;
@@ -59,7 +59,7 @@ pxlCore_Form_FileUpload.prototype =
 			return true;
 		}
 
-		if ( !$pxl.inArray(file.type, self.allowed_mime_types) )
+		if ( !self.$pxl.inArray(file.type, self.allowed_mime_types) )
 		{
 			//self.throwError('Selected file type (' + file.type + ') is not valid (Allowed file types are: ' + $pxl.implode(', ', self.allowed_mime_types, ' and ') + ').');
 
@@ -104,7 +104,7 @@ pxlCore_Form_FileUpload.prototype =
 				return;
 			}
 
-			if ( $pxl.isFunction(self.events.onFileComplete) )
+			if ( self.$pxl.isFunction(self.events.onFileComplete) )
 			{
 				self.events.onFileComplete(
 				{
@@ -129,7 +129,7 @@ pxlCore_Form_FileUpload.prototype =
 			}
 			else
 			{
-				if ( $pxl.isFunction(self.events.onAllComplete) )
+				if ( self.$pxl.isFunction(self.events.onAllComplete) )
 				{
 					self.events.onAllComplete();
 				}
@@ -140,7 +140,7 @@ pxlCore_Form_FileUpload.prototype =
 			}
 		};
 
-		if ( $pxl.isFunction(self.events.onBeforeFileUpload) )
+		if ( self.$pxl.isFunction(self.events.onBeforeFileUpload) )
 		{
 			self.events.onBeforeFileUpload(
 			{
@@ -157,14 +157,14 @@ pxlCore_Form_FileUpload.prototype =
 			additional_data['X-Pxl-Size'] = file.file.size;
 			additional_data['X-Pxl-Mime'] = file.file.type;
 
-			$pxl.ajax.post
+			self.$pxl.ajax.post
 			(
 				self.save_url,
 				file.file,
 				{
 					progress: function(percent)
 					{
-						if ( $pxl.isFunction(self.events.onFileProgress) )
+						if ( self.$pxl.isFunction(self.events.onFileProgress) )
 						{
 							self.events.onFileProgress(
 							{
@@ -178,7 +178,7 @@ pxlCore_Form_FileUpload.prototype =
 					{
 						var file = self.files[self.num_processed_files];
 
-						if ( $pxl.isFunction(self.events.onFileComplete) )
+						if ( self.$pxl.isFunction(self.events.onFileComplete) )
 						{
 							self.events.onFileComplete(
 							{
@@ -194,7 +194,7 @@ pxlCore_Form_FileUpload.prototype =
 					{
 						if ( self.cancelled === false )
 						{
-							if ( $pxl.isFunction(self.events.onFileError) )
+							if ( self.$pxl.isFunction(self.events.onFileError) )
 							{
 								self.events.onFileError(
 								{
@@ -234,11 +234,11 @@ pxlCore_Form_FileUpload.prototype =
 	{
 		var self = this;
 
-		if ( $pxl.isUndefined(self.files[index]) )
+		if ( self.$pxl.isUndefined(self.files[index]) )
 		{
-			if ( $pxl.options.debug === true )
+			if ( self.$pxl.options.debug === true )
 			{
-				$pxl.error('Could not find queue file on index ' + index + '.');
+				self.$pxl.error('Could not find queue file on index ' + index + '.');
 			}
 
 			return;
@@ -276,7 +276,7 @@ pxlCore_Form_FileUpload.prototype =
 
 	getFile: function(index)
 	{
-		if ( $pxl.isUndefined(this.files[index]) )
+		if ( self.$pxl.isUndefined(this.files[index]) )
 		{
 			return null;
 		}
@@ -349,16 +349,16 @@ pxlCore_Form_FileUpload.prototype =
 
 		self.cancelled = true;
 
-		if ( !$pxl.isUndefined($pxl.ajax.requests[self.save_url]) )
+		if ( !self.$pxl.isUndefined(self.$pxl.ajax.requests[self.save_url]) )
 		{
-			$pxl.ajax.requests[self.save_url].abort();
+			self.$pxl.ajax.requests[self.save_url].abort();
 		}
 
 		var was_uploading = (self.is_uploading === true);
 
 		self.is_uploading = false;
 
-		if ( $pxl.isFunction(self.events.onCancel) )
+		if ( self.$pxl.isFunction(self.events.onCancel) )
 		{
 			self.events.onCancel(
 			{

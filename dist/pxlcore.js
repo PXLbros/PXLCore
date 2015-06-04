@@ -40,34 +40,35 @@ pxlCore_DynamicItem.prototype =
 		}
 
 		self.$pxl = $pxl;
+
+		self.initTable();
 	},
 
 	initTable: function()
 	{
-		if ( typeof dynamic_item.table === 'object' )
+		var self = this;
+
+		self.table.$container = $(self.table.container_selector);
+
+		if ( self.table.$container.length === 0 )
 		{
-			this.table.$container = $(this.table.container_selector);
+			self.$pxl.log('Could not find dynamic table element "' + self.table.container_selector + '".');
 
-			if ( this.table.$container.length === 0 )
-			{
-				$pxl.log('Could not find dynamic table element "' + this.table.container_selector + '".');
-
-				return;
-			}
-
-			/*if ( typeof dynamic_item.table.urls === 'undefined' )
-			{
-				this.show_error();
-
-				$pxl.log('Required attribute "urls" is not defined.');
-
-				return;
-			}*/
-
-			this.table.loading_html = this.table.$container.html();
-
-			this.refreshTable(true);
+			return;
 		}
+
+		/*if ( typeof dynamic_item.table.urls === 'undefined' )
+		{
+			self.show_error();
+
+			self.$pxl.log('Required attribute "urls" is not defined.');
+
+			return;
+		}*/
+
+		self.table.loading_html = self.table.$container.html();
+
+		self.refreshTable(true);
 	},
 
 	refreshTable: function(init)
@@ -76,7 +77,7 @@ pxlCore_DynamicItem.prototype =
 
 		if ( init === false )
 		{
-			this.showTableLoader();
+			inst.showTableLoader();
 		}
 
 		var ajax_data = {};
@@ -91,32 +92,29 @@ pxlCore_DynamicItem.prototype =
 			ajax_data.search_query = inst.search_query;
 		}
 
-		/*$core.ajax.get
+		inst.$pxl.ajax.get
 		(
-			dynamic_table.urls.get,
+			dynamic_item.config.table.routes.get,
 			ajax_data,
 			{
 				success: function(result)
 				{
-					$(result.data.html).imagesLoaded().always(function()
+					inst.table.$container.html(result.data.html);
+
+					if ( dynamic_item.config.table.paging.enabled === true )
 					{
-						inst.$container.html(result.data.html);
+						inst.current_page = result.data.paging.current_page;
+						inst.num_pages = result.data.paging.num_pages;
+					}
 
-						if ( dynamic_table.paging.enabled === true )
-						{
-							inst.current_page = result.data.paging.current_page;
-							inst.num_pages = result.data.paging.num_pages;
-						}
-
-						inst.binds();
-					});
+					inst.binds();
 				},
 				error: function()
 				{
-					inst.show_error();
+					inst.showTableError();
 				}
 			}
-		);*/
+		);
 
 		alert('we');
 	},
@@ -129,7 +127,7 @@ pxlCore_DynamicItem.prototype =
 	showTableError: function()
 	{
 		this.table.$container.html('Could not load ' + dynamic_item.config.identifier.plural + '.');
-	},
+	}
 };
 /**
  * pxlCore/Notification/Engine/SweetAlert
@@ -1076,28 +1074,28 @@ pxlCore_Ajax_Request.prototype =
 	{
 		var inst = this;
 
-		if ( $pxl.isUndefined(inst.url) )
+		if ( inst.$pxl.isUndefined(inst.url) )
 		{
-			$pxl.log('Missing AJAX URL.');
+			inst.$pxl.log('Missing AJAX URL.');
 
 			return;
 		}
 
-		if ( !$pxl.isUndefined($pxl.ajax.requests[inst.url]) && ($pxl.isUndefined(inst.allowMultiple) || inst.allowMultiple === false) )
+		if ( !inst.$pxl.isUndefined(inst.$pxl.ajax.requests[inst.url]) && (inst.$pxl.isUndefined(inst.allowMultiple) || inst.allowMultiple === false) )
 		{
-			$pxl.ajax.requests[inst.url].abort();
+			inst.$pxl.ajax.requests[inst.url].abort();
 		}
 
-		var file_upload = ($pxl.isDefined(inst.file_upload) && inst.file_upload === true);
+		var file_upload = (inst.$pxl.isDefined(inst.file_upload) && inst.file_upload === true);
 
-		var headers = { 'X-XSRF-TOKEN': $pxl.framework.csrf_token };
+		var headers = { 'X-XSRF-TOKEN': inst.$pxl.framework.csrf_token };
 
-		if ( file_upload === true && $pxl.isObject(inst.file_upload_data) )
+		if ( file_upload === true && inst.$pxl.isObject(inst.file_upload_data) )
 		{
 			headers = $.extend(headers, inst.file_upload_data);
 		}
 
-		$pxl.ajax.requests[inst.url] = $.ajax(
+		inst.$pxl.ajax.requests[inst.url] = $.ajax(
 		{
 			type: inst.method,
 			url: inst.url,
@@ -1112,7 +1110,7 @@ pxlCore_Ajax_Request.prototype =
 			{
 				var xhr = $.ajaxSettings.xhr();
 
-				if ( $pxl.isFunction(inst.progress) )
+				if ( inst.$pxl.isFunction(inst.progress) )
 				{
 					xhr.upload.onprogress = function(e)
 					{
@@ -1126,14 +1124,14 @@ pxlCore_Ajax_Request.prototype =
 			},
 			beforeSend: function(xhr, data)
 			{
-				if ( $pxl.isFunction(inst.before) )
+				if ( inst.$pxl.isFunction(inst.before) )
 				{
 					inst.before(xhr, data);
 				}
 			}
 		}).done(function(result)
 		{
-			if ( $pxl.isFunction(inst.success) )
+			if ( inst.$pxl.isFunction(inst.success) )
 			{
 				inst.success(result);
 			}
@@ -1142,46 +1140,46 @@ pxlCore_Ajax_Request.prototype =
 			{
 				if ( typeof result.notification.type === 'number' && typeof result.notification.text === 'string' )
 				{
-					$pxl.notification.show({ type: result.notification.type, message: result.notification.text });
+					inst.$pxl.notification.show({ type: result.notification.type, message: result.notification.text });
 				}
 			}
 
-			if ( !$pxl.isUndefined(result.redirect) )
+			if ( !inst.$pxl.isUndefined(result.redirect) )
 			{
 				setTimeout(function()
 				{
-					return $pxl.redirect(result.redirect.url);
+					return inst.$pxl.redirect(result.redirect.url);
 				}, result.redirect.delay);
 			}
 
 			inst.result = result;
 		}).always(function(result)
 		{
-			if ( $pxl.isFunction(inst.always) )
+			if ( inst.$pxl.isFunction(inst.always) )
 			{
 				inst.always(result);
 			}
 
-			delete $pxl.ajax.requests[inst.url];
+			delete inst.$pxl.ajax.requests[inst.url];
 		}).fail(function(xhr, textStatus, errorThrown)
 		{
 			if ( xhr === 'abort' )
 			{
-				if ( $pxl.isFunction(inst.abort) )
+				if ( inst.$pxl.isFunction(inst.abort) )
 				{
 					inst.abort();
 				}
 			}
 			else
 			{
-				if ( $pxl.isFunction(inst.error) )
+				if ( inst.$pxl.isFunction(inst.error) )
 				{
 					inst.error(errorThrown);
 				}
 
-				if ( $pxl.options.debug === true && $pxl.isDefined(xhr.responseText) )
+				if ( inst.$pxl.options.debug === true && inst.$pxl.isDefined(xhr.responseText) )
 				{
-					$pxl.notification.showError({ message: xhr.responseText, autoHide: false });
+					inst.$pxl.notification.showError({ message: xhr.responseText, autoHide: false });
 				}
 			}
 		});
@@ -1209,9 +1207,9 @@ pxlCore_Ajax.prototype =
 
 		self.$pxl = $pxl;
 
-		if ( $pxl.options.debug === true )
+		if ( self.$pxl.options.debug === true )
 		{
-			$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
+			self.$pxl.log('~ pxlCore/Ajax ~', '#CCC', 'black');
 		}
 	},
 
@@ -1362,7 +1360,7 @@ pxlCore_UI.prototype =
 			return;
 		}
 
-		if ( !$pxl.isFunction(callback) )
+		if ( !this.$pxl.isFunction(callback) )
 		{
 			return;
 		}
@@ -1380,7 +1378,7 @@ pxlCore_UI.prototype =
 			return;
 		}
 
-		if ( !$pxl.isFunction(callback) )
+		if ( !this.$pxl.isFunction(callback) )
 		{
 			return;
 		}
@@ -1414,14 +1412,14 @@ pxlCore_URI.prototype =
 
 	urlize: function(url)
 	{
-		if ( $pxl.isUndefined($pxl.framework.base_url) )
+		if ( this.$pxl.isUndefined(this.$pxl.framework.base_url) )
 		{
-			$pxl.log('Base URL not set.');
+			this.$pxl.log('Base URL not set.');
 
 			return;
 		}
 
-		return $pxl.framework.base_url + url;
+		return this.$pxl.framework.base_url + url;
 	}
 };
 /**
@@ -1468,7 +1466,7 @@ pxlCore_Form_FileUpload.prototype =
 		var self = this;
 
 		self.save_url = save_url;
-		self.additional_data = ($pxl.isObject(additional_data) ? additional_data : {});
+		self.additional_data = (self.$pxl.isObject(additional_data) ? additional_data : {});
 
 		self.allowed_mime_types = allowed_mime_types;
 		self.events = events;
@@ -1485,7 +1483,7 @@ pxlCore_Form_FileUpload.prototype =
 			return true;
 		}
 
-		if ( !$pxl.inArray(file.type, self.allowed_mime_types) )
+		if ( !self.$pxl.inArray(file.type, self.allowed_mime_types) )
 		{
 			//self.throwError('Selected file type (' + file.type + ') is not valid (Allowed file types are: ' + $pxl.implode(', ', self.allowed_mime_types, ' and ') + ').');
 
@@ -1530,7 +1528,7 @@ pxlCore_Form_FileUpload.prototype =
 				return;
 			}
 
-			if ( $pxl.isFunction(self.events.onFileComplete) )
+			if ( self.$pxl.isFunction(self.events.onFileComplete) )
 			{
 				self.events.onFileComplete(
 				{
@@ -1555,7 +1553,7 @@ pxlCore_Form_FileUpload.prototype =
 			}
 			else
 			{
-				if ( $pxl.isFunction(self.events.onAllComplete) )
+				if ( self.$pxl.isFunction(self.events.onAllComplete) )
 				{
 					self.events.onAllComplete();
 				}
@@ -1566,7 +1564,7 @@ pxlCore_Form_FileUpload.prototype =
 			}
 		};
 
-		if ( $pxl.isFunction(self.events.onBeforeFileUpload) )
+		if ( self.$pxl.isFunction(self.events.onBeforeFileUpload) )
 		{
 			self.events.onBeforeFileUpload(
 			{
@@ -1583,14 +1581,14 @@ pxlCore_Form_FileUpload.prototype =
 			additional_data['X-Pxl-Size'] = file.file.size;
 			additional_data['X-Pxl-Mime'] = file.file.type;
 
-			$pxl.ajax.post
+			self.$pxl.ajax.post
 			(
 				self.save_url,
 				file.file,
 				{
 					progress: function(percent)
 					{
-						if ( $pxl.isFunction(self.events.onFileProgress) )
+						if ( self.$pxl.isFunction(self.events.onFileProgress) )
 						{
 							self.events.onFileProgress(
 							{
@@ -1604,7 +1602,7 @@ pxlCore_Form_FileUpload.prototype =
 					{
 						var file = self.files[self.num_processed_files];
 
-						if ( $pxl.isFunction(self.events.onFileComplete) )
+						if ( self.$pxl.isFunction(self.events.onFileComplete) )
 						{
 							self.events.onFileComplete(
 							{
@@ -1620,7 +1618,7 @@ pxlCore_Form_FileUpload.prototype =
 					{
 						if ( self.cancelled === false )
 						{
-							if ( $pxl.isFunction(self.events.onFileError) )
+							if ( self.$pxl.isFunction(self.events.onFileError) )
 							{
 								self.events.onFileError(
 								{
@@ -1660,11 +1658,11 @@ pxlCore_Form_FileUpload.prototype =
 	{
 		var self = this;
 
-		if ( $pxl.isUndefined(self.files[index]) )
+		if ( self.$pxl.isUndefined(self.files[index]) )
 		{
-			if ( $pxl.options.debug === true )
+			if ( self.$pxl.options.debug === true )
 			{
-				$pxl.error('Could not find queue file on index ' + index + '.');
+				self.$pxl.error('Could not find queue file on index ' + index + '.');
 			}
 
 			return;
@@ -1702,7 +1700,7 @@ pxlCore_Form_FileUpload.prototype =
 
 	getFile: function(index)
 	{
-		if ( $pxl.isUndefined(this.files[index]) )
+		if ( self.$pxl.isUndefined(this.files[index]) )
 		{
 			return null;
 		}
@@ -1775,16 +1773,16 @@ pxlCore_Form_FileUpload.prototype =
 
 		self.cancelled = true;
 
-		if ( !$pxl.isUndefined($pxl.ajax.requests[self.save_url]) )
+		if ( !self.$pxl.isUndefined(self.$pxl.ajax.requests[self.save_url]) )
 		{
-			$pxl.ajax.requests[self.save_url].abort();
+			self.$pxl.ajax.requests[self.save_url].abort();
 		}
 
 		var was_uploading = (self.is_uploading === true);
 
 		self.is_uploading = false;
 
-		if ( $pxl.isFunction(self.events.onCancel) )
+		if ( self.$pxl.isFunction(self.events.onCancel) )
 		{
 			self.events.onCancel(
 			{
@@ -1824,7 +1822,7 @@ pxlCore_Form.prototype =
 
 		self.$pxl = $pxl;
 
-		self.file_upload = new pxlCore_Form_FileUpload($pxl);
+		self.file_upload = new pxlCore_Form_FileUpload(self.$pxl);
 	}
 };
 function pxlCore(options)
@@ -1834,7 +1832,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.54',
+	version: '1.0.55',
 
 	options:
 	{

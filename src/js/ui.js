@@ -25,7 +25,7 @@ pxlCore_UI.prototype =
 			return;
 		}
 
-		if ( !$pxl.isFunction(callback) )
+		if ( !this.$pxl.isFunction(callback) )
 		{
 			return;
 		}
@@ -43,7 +43,7 @@ pxlCore_UI.prototype =
 			return;
 		}
 
-		if ( !$pxl.isFunction(callback) )
+		if ( !this.$pxl.isFunction(callback) )
 		{
 			return;
 		}

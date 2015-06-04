@@ -25,6 +25,6 @@ pxlCore_Form.prototype =
 
 		self.$pxl = $pxl;
 
-		self.file_upload = new pxlCore_Form_FileUpload($pxl);
+		self.file_upload = new pxlCore_Form_FileUpload(self.$pxl);
 	}
 };
