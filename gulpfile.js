@@ -7,7 +7,8 @@ var gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	minifyCSS = require('gulp-minify-css'),
 	rename = require('gulp-rename'),
-	es6transpiler = require('gulp-es6-transpiler');
+	babel = require('gulp-babel'),
+	jsdoc = require('gulp-jsdoc');
 
 var SRC_DIR = 'src/',
 	JS_DIR = SRC_DIR + 'js/',
@@ -45,8 +46,18 @@ gulp.task('minify-css', function()
 
 gulp.task('lint', function()
 {
-	return gulp.src(JS_DIR + '/**/*.js')
+	return gulp.src(JS_DIR + '**/*.js')
 		.pipe(jshint())
+		.pipe(jshint.reporter(stylish));
+});
+
+gulp.task('lint-es6', function()
+{
+	return gulp.src(SRC_DIR + 'js_es6/**/*.js')
+		.pipe(jshint(
+		{
+			esnext: true
+		}))
 		.pipe(jshint.reporter(stylish));
 });
 
@@ -82,10 +93,16 @@ gulp.task('uglify', function()
 		.pipe(gulp.dest(DIST_DIR));
 });
 
+gulp.task('jsdoc', function()
+{
+	return gulp.src(SRC_DIR + 'js_es6/**/*.js')
+		.pipe(jsdoc('html/docs/'));
+});
+
 gulp.task('es6', function()
 {
     return gulp.src(SRC_DIR + 'js_es6/**/*.js')
-        .pipe(es6transpiler())
+        .pipe(babel())
         .pipe(gulp.dest('html/js/es6/'));
 });
 
@@ -94,7 +111,7 @@ gulp.task('watch', function()
 	gulp.watch(SASS_DIR + '**/*.scss', ['compass', 'minify-css']);
 	gulp.watch(JS_DIR + '**/*.js', ['lint', 'concat', 'uglify']);
 
-	gulp.watch(SRC_DIR + 'js_es6/**/*.js', ['es6']);
+	gulp.watch(SRC_DIR + 'js_es6/**/*.js', [/*'jsdoc', */'lint-es6', 'es6']);
 });
 
-gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'uglify', 'es6', 'watch']);
+gulp.task('default', ['compass', 'minify-css', 'lint', 'concat', 'uglify', /*'jsdoc', */'lint-es6', 'es6', 'watch']);

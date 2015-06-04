@@ -28,6 +28,42 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 
 	showSuccess: function(options)
 	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'success'
+		});
+	},
+
+	showInfo: function(options)
+	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'info'
+		});
+	},
+
+	showWarning: function(options)
+	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'warning'
+		});
+	},
+
+	showError: function(options)
+	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'error'
+		});
 	},
 
 	showConfirm: function(options)
@@ -1665,7 +1701,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.51',
+	version: '1.0.52',
 
 	options:
 	{
@@ -1684,6 +1720,7 @@ pxlCore.prototype =
 	notification: null,
 	uri: null,
 	form: null,
+	dynamic_item: null,
 
 	libraries: [],
 
@@ -1739,6 +1776,9 @@ pxlCore.prototype =
 
 		// Form
 		self.form = new pxlCore_Form(self);
+
+		// Dynamic Item
+		self.dynamic_item = new pxlCore_DynamicItem(self);
 	},
 
 	/**

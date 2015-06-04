@@ -1,5 +1,3 @@
-import pxlCore_UI from 'ui';
-
 class pxlCore
 {
 	constructor(options)
@@ -11,8 +9,10 @@ class pxlCore
 			debug: false,
 			console:
 			{
-				title_background_color: 'black',
-				title_foreground_color: 'white'
+				main_title_background_color: 'black',
+				main_title_foreground_color: 'white',
+				module_title_background_color: '#EEE',
+				module_title_foreground_color: 'black'
 			},
 			notification:
 			{
@@ -25,25 +25,29 @@ class pxlCore
 			this.options = this.extend(this.options, options);
 		}
 
-		if ( this.options.debug == true )
+		if ( this.options.debug === true )
 		{
-			this.log('~ pxlCore ~', this.options.console.title_background_color, this.options.console.title_foreground_color);
+			this.log('~ pxlCore ~', this.options.console.main_title_background_color, this.options.console.main_title_foreground_color);
 			this.log('Version: ' + this.version);
 		}
 
-		this.UI = new pxlCore_UI(this);
+		this.ui = new pxlCore_UI(this);
+		this.ajax = new pxlCore_Ajax(this);
+		this.uri = new pxlCore_URI(this);
+		this.form = new pxlCore_Form(this);
+		this.notification = new pxlCore_Notification(this);
 	}
 
-	log(text, background_color, color)
+	log(text, background_color = null, color = null)
 	{
-		var style = '';
+		let style = '';
 
-		if ( typeof background_color === 'string' )
+		if ( background_color !== null )
 		{
 			style = 'background:' + background_color + ';padding:0 6px';
 		}
 
-		if ( typeof color === 'string' )
+		if ( color !== null )
 		{
 			style += (style !== '' ? ';' : '') + 'color:' + color;
 		}
@@ -58,7 +62,7 @@ class pxlCore
 
 	extend(defaults, options)
 	{
-	    var extended = {},
+	    let extended = {},
 	        key;
 
 	    for ( key in defaults )
@@ -78,5 +82,46 @@ class pxlCore
 	    }
 
 	    return extended;
+	}
+
+	isUndefined(object)
+	{
+		return object == void 0;
+	}
+
+	isDefined(object)
+	{
+		return !this.isUndefined(object);
+	}
+
+	isFunction(object)
+	{
+		return (typeof object === 'function');
+	}
+
+	isObject(object)
+	{
+		return object === Object(object);
+	}
+
+	inArray(subject, array)
+	{
+		return ($.inArray(subject, array) !== -1);
+	}
+
+	getObjectSize(object)
+	{
+		let size = 0,
+			key;
+
+		for ( key in object )
+		{
+			if ( object.hasOwnProperty(key) )
+			{
+				size++;
+			}
+		}
+
+		return size;
 	}
 }

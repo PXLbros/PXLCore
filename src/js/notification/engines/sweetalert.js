@@ -28,6 +28,42 @@ pxlCore_Notification_Engine_SweetAlert.prototype =
 
 	showSuccess: function(options)
 	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'success'
+		});
+	},
+
+	showInfo: function(options)
+	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'info'
+		});
+	},
+
+	showWarning: function(options)
+	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'warning'
+		});
+	},
+
+	showError: function(options)
+	{
+		swal(
+		{
+			title: options.title,
+			text: (options.message !== null ? options.message : null),
+			type: 'error'
+		});
 	},
 
 	showConfirm: function(options)

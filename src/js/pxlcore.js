@@ -5,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.51',
+	version: '1.0.52',
 
 	options:
 	{
@@ -24,6 +24,7 @@ pxlCore.prototype =
 	notification: null,
 	uri: null,
 	form: null,
+	dynamic_item: null,
 
 	libraries: [],
 
@@ -79,6 +80,9 @@ pxlCore.prototype =
 
 		// Form
 		self.form = new pxlCore_Form(self);
+
+		// Dynamic Item
+		self.dynamic_item = new pxlCore_DynamicItem(self);
 	},
 
 	/**
