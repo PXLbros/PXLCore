@@ -115,8 +115,6 @@ pxlCore_DynamicItem.prototype =
 				}
 			}
 		);
-
-		alert('we');
 	},
 
 	showTableLoader: function()
