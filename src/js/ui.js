@@ -5,6 +5,8 @@
  */
 function pxlCore_UI($pxl)
 {
+	this.$pxl = $pxl;
+
 	this.init($pxl);
 }
 

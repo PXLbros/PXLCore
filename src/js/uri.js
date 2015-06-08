@@ -5,13 +5,15 @@
  */
 function pxlCore_URI($pxl)
 {
-	this.init($pxl);
+	this.$pxl = $pxl;
 }
 
 pxlCore_URI.prototype =
 {
 	init: function($pxl)
 	{
+		this.$pxl = $pxl;
+
 		if ( $pxl.options.debug === true )
 		{
 			$pxl.log('~ pxlCore/URI ~', '#CCC', 'black');

@@ -5,6 +5,8 @@
  */
 function pxlCore_Modal($pxl)
 {
+	this.$pxl = $pxl;
+
 	this.init($pxl);
 }
 
