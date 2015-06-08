@@ -125,6 +125,61 @@ pxlCore_DynamicItem.prototype =
 	showTableError: function()
 	{
 		this.table.$container.html('Could not load ' + dynamic_item.config.identifier.plural + '.');
+	},
+
+	binds: function(id)
+	{
+		var self = this,
+			$container = (self.$pxl.isDefined(id) ? $('#dynamic-table-item-' + id) : self.table.$container);
+
+		if ( dynamic_item.config.table.paging.enabled === true )
+		{
+			self.$paging_containers = self.table.$container.find('.pagination');
+
+			self.$paging_containers.find('.prev:not(.disabled)').on('click', function()
+			{
+				self.current_page--;
+
+				self.refreshTable(false);
+			});
+
+			self.$paging_containers.find('.next:not(.disabled)').on('click', function()
+			{
+				self.current_page++;
+
+				self.refreshTable(false);
+			});
+		}
+
+		if ( dynamic_item.config.table.search.enabled === true )
+		{
+			self.$search_input = $(self.table.search_input_selector);
+
+			if ( self.searching === true )
+			{
+				self.$pxl.ui.setCaretAtEnd(document.querySelector(self.search_input_selector));
+
+				self.searching = false;
+			}
+
+			if ( self.$search_input.length === 0 )
+			{
+				self.$pxl.log('Could not find dynamic table search input ' + self.table.search_input_selector + '.');
+			}
+			else
+			{
+				self.$search_input.on('keyup', function(e)
+				{
+					if ( (e.keyCode || e.which) === 13 )
+					{
+						self.search_query = self.$search_input.val();
+						self.searching = true;
+
+						self.refreshTable(false);
+					}
+				});
+			}
+		}
 	}
 };
 /**
@@ -1386,6 +1441,28 @@ pxlCore_UI.prototype =
 		element.addEventListener('oTransitionEnd', callback, false);
 		element.addEventListener('msTransitionEnd', callback, false);
 		element.addEventListener('transitionend', callback, false);
+	},
+
+	setCaretAtEnd: function(element)
+	{
+		var value_length = element.value.length;
+
+		if ( document.selection )
+		{
+			element.focus();
+
+			var range = document.selection.createRange();
+			range.moveStart('character', -value_length);
+			range.moveStart('character', value_length);
+			range.moveEnd('character', 0);
+			range.select();
+		}
+		else if ( element.selectionStart || element.selectionStart === 0 )
+		{
+			element.selectionStart = value_length;
+			element.selectionEnd = value_length;
+			element.focus();
+		}
 	}
 };
 /**
@@ -1830,7 +1907,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.57',
+	version: '1.0.59',
 
 	options:
 	{
