@@ -53,5 +53,27 @@ pxlCore_UI.prototype =
 		element.addEventListener('oTransitionEnd', callback, false);
 		element.addEventListener('msTransitionEnd', callback, false);
 		element.addEventListener('transitionend', callback, false);
+	},
+
+	setCaretAtEnd: function(element)
+	{
+		var value_length = element.value.length;
+
+		if ( document.selection )
+		{
+			element.focus();
+
+			var range = document.selection.createRange();
+			range.moveStart('character', -value_length);
+			range.moveStart('character', value_length);
+			range.moveEnd('character', 0);
+			range.select();
+		}
+		else if ( element.selectionStart || element.selectionStart === 0 )
+		{
+			element.selectionStart = value_length;
+			element.selectionEnd = value_length;
+			element.focus();
+		}
 	}
 };
