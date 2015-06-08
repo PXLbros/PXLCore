@@ -650,6 +650,8 @@ pxlCore_Notification.prototype =
  */
 function pxlCore_Modal($pxl)
 {
+	this.$pxl = $pxl;
+
 	this.init($pxl);
 }
 
@@ -1393,6 +1395,8 @@ pxlCore_Ajax.prototype =
  */
 function pxlCore_UI($pxl)
 {
+	this.$pxl = $pxl;
+
 	this.init($pxl);
 }
 
@@ -1472,13 +1476,15 @@ pxlCore_UI.prototype =
  */
 function pxlCore_URI($pxl)
 {
-	this.init($pxl);
+	this.$pxl = $pxl;
 }
 
 pxlCore_URI.prototype =
 {
 	init: function($pxl)
 	{
+		this.$pxl = $pxl;
+
 		if ( $pxl.options.debug === true )
 		{
 			$pxl.log('~ pxlCore/URI ~', '#CCC', 'black');
@@ -1907,7 +1913,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.60',
+	version: '1.0.62',
 
 	options:
 	{
