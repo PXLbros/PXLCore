@@ -157,7 +157,7 @@ pxlCore_DynamicItem.prototype =
 
 			if ( self.searching === true )
 			{
-				self.$pxl.ui.setCaretAtEnd(document.querySelector(self.search_input_selector));
+				self.$pxl.ui.setCaretAtEnd(document.querySelector(self.table.search_input_selector));
 
 				self.searching = false;
 			}
