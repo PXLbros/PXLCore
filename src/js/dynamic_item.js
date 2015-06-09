@@ -30,6 +30,24 @@ pxlCore_DynamicItem.prototype =
 		num_pages: null
 	},
 
+	item:
+	{
+		form_selector: '#dynamic-item-form',
+		$form: null,
+
+		loader_selector: '#dynamic-item-form-loader',
+		$loader: null,
+		$loader_text: null,
+
+		tabs_selector: '#dynamic-item-tabs',
+		$tabs: null,
+
+		save_button_selector: '#dynamic-item-save-button',
+		$save_button: null,
+
+		types_with_custom_saving: ['image'],
+	},
+
 	init: function($pxl)
 	{
 		var self = this;
@@ -42,6 +60,7 @@ pxlCore_DynamicItem.prototype =
 		self.$pxl = $pxl;
 
 		self.initTable();
+		self.initItem();
 	},
 
 	initTable: function()
@@ -180,5 +199,110 @@ pxlCore_DynamicItem.prototype =
 				});
 			}
 		}
+	},
+
+	initItem: function()
+	{
+		var inst = this;
+
+		inst.item.$form = $(inst.item.form_selector);
+
+		if ( inst.item.$form.length === 0 )
+		{
+			if ( typeof dynamic_item === 'object' )
+			{
+				self.$pxl.log('Could not find dynamic item form "' + self.item.form_selector + '".');
+			}
+
+			return;
+		}
+
+		inst.item.$form.on('submit', function()
+		{
+			return false;
+		});
+
+		inst.item.$loader = $(inst.item.loader_selector);
+		inst.item.$loader_text = inst.item.$loader.children('.text');
+
+		inst.item.$save_button = $(inst.item.save_button_selector);
+		inst.item.$save_button.attr('data-default_text', inst.item.$save_button.text());
+
+		var validation_rules = {};
+
+		for ( var column_id in dynamic_item.columns )
+		{
+			if ( dynamic_item.columns.hasOwnProperty(column_id) )
+			{
+				dynamic_item.columns[column_id].id = column_id;
+
+				var column = dynamic_item.columns[column_id],
+					rules = [];
+
+				if ( typeof column.form.validation === 'object' )
+				{
+					if ( typeof column.form.validation.required === 'number' && (column.form.validation.required === dynamic_item.DYNAMIC_ITEM_ALWAYS_REQUIRED || item_id_to_edit === null && column.form.validation.required === dynamic_item.DYNAMIC_ITEM_REQUIRED_ON_ADD) )
+					{
+						var error_message = '';
+
+						if ( column.form.type === 'select' )
+						{
+							error_message = 'Choose a ' + column.title.toLowerCase();
+						}
+						else
+						{
+							error_message = column.title + ' is required';
+						}
+
+						rules.push({ type: 'empty', prompt: error_message });
+					}
+
+					if ( typeof column.form.maxlength === 'number' )
+					{
+						rules.push({ type: 'maxLength[' + column.validation.maxlength + ']', prompt: 'Name can\'t be longer than ' + column.validation.maxlength + ' character' + (column.validation.maxlength !== 1 ? 's' : '') });
+					}
+				}
+
+				if ( typeof column.form.verify === 'boolean' && column.form.verify === true )
+				{
+					var verify_identifier = 'verify_' + column_id;
+
+					validation_rules[verify_identifier] =
+					{
+						identifier: verify_identifier,
+						optional: (item_id_to_edit !== null),
+						rules:
+						[
+							{
+								type: 'empty',
+								prompt: 'Verify ' + column.title + ' is required'
+							},
+							{
+								type: 'match[' + column.form.name + ']',
+								prompt: 'Verify ' + column.title + ' doesn\'t match with ' + column.title
+							}
+						]
+					};
+				}
+
+				validation_rules[column_id] =
+				{
+					identifier: column_id,
+					rules: rules
+				};
+			}
+		}
+
+		inst.item.$form.form
+		(
+			validation_rules,
+			{
+				inline: true,
+				onSuccess: function()
+				{
+					alert('we');
+				}
+			}
+		);
 	}
 };
