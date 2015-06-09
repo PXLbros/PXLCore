@@ -67,6 +67,11 @@ pxlCore_DynamicItem.prototype =
 	{
 		var self = this;
 
+		if ( typeof dynamic_item === 'undefined' || dynamic_item.current_page !== 'table' )
+		{
+			return;
+		}
+
 		self.table.$container = $(self.table.container_selector);
 
 		if ( self.table.$container.length === 0 )
@@ -205,14 +210,21 @@ pxlCore_DynamicItem.prototype =
 	{
 		var inst = this;
 
+		if ( typeof dynamic_item === 'undefined' )
+		{
+			return;
+		}
+
+		if ( typeof dynamic_item === 'undefined' || dynamic_item.current_page !== 'item' )
+		{
+			return;
+		}
+
 		inst.item.$form = $(inst.item.form_selector);
 
 		if ( inst.item.$form.length === 0 )
 		{
-			if ( typeof dynamic_item === 'object' )
-			{
-				self.$pxl.log('Could not find dynamic item form "' + self.item.form_selector + '".');
-			}
+			inst.$pxl.log('Could not find dynamic item form "' + inst.item.form_selector + '".');
 
 			return;
 		}
@@ -265,7 +277,7 @@ pxlCore_DynamicItem.prototype =
 
 				if ( typeof column.form.verify === 'boolean' && column.form.verify === true )
 				{
-					var verify_identifier = 'verify_' + column_id;
+					var verify_identifier = 'verify-' + column_id;
 
 					validation_rules[verify_identifier] =
 					{
@@ -278,7 +290,7 @@ pxlCore_DynamicItem.prototype =
 								prompt: 'Verify ' + column.title + ' is required'
 							},
 							{
-								type: 'match[' + column.form.name + ']',
+								type: 'match[' + column_id + ']',
 								prompt: 'Verify ' + column.title + ' doesn\'t match with ' + column.title
 							}
 						]
@@ -300,7 +312,28 @@ pxlCore_DynamicItem.prototype =
 				inline: true,
 				onSuccess: function()
 				{
-					alert('we');
+					inst.item.$save_button.prop('disabled', true);
+
+					inst.item.$loader.addClass('active');
+
+					var post_data = inst.item.$form.find(':input').serialize();
+
+					inst.$pxl.ajax.post
+					(
+						inst.item.$form.attr('action'),
+						post_data,
+						{
+							success: function(result)
+							{
+							},
+							error: function()
+							{
+							},
+							always:
+							{
+							}
+						}
+					);
 				}
 			}
 		);
@@ -2037,7 +2070,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.63',
+	version: '1.0.64',
 
 	options:
 	{
