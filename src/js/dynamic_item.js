@@ -240,7 +240,8 @@ pxlCore_DynamicItem.prototype =
 		inst.item.$save_button = $(inst.item.save_button_selector);
 		inst.item.$save_button.attr('data-default_text', inst.item.$save_button.text());
 
-		var validation_rules = {};
+		var validation_rules = {},
+			custom_saving_columns = [];
 
 		for ( var column_id in dynamic_item.columns )
 		{
@@ -253,7 +254,7 @@ pxlCore_DynamicItem.prototype =
 
 				if ( typeof column.form.validation === 'object' )
 				{
-					if ( typeof column.form.validation.required === 'number' && (column.form.validation.required === dynamic_item.DYNAMIC_ITEM_ALWAYS_REQUIRED || item_id_to_edit === null && column.form.validation.required === dynamic_item.DYNAMIC_ITEM_REQUIRED_ON_ADD) )
+					if ( typeof column.form.validation.required === 'number' && (column.form.validation.required === dynamic_item.DYNAMIC_ITEM_ALWAYS_REQUIRED || dynamic_item.item_id_to_edit === null && column.form.validation.required === dynamic_item.DYNAMIC_ITEM_REQUIRED_ON_ADD) )
 					{
 						var error_message = '';
 
@@ -282,7 +283,7 @@ pxlCore_DynamicItem.prototype =
 					validation_rules[verify_identifier] =
 					{
 						identifier: verify_identifier,
-						optional: (item_id_to_edit !== null),
+						optional: (dynamic_item.item_id_to_edit !== null),
 						rules:
 						[
 							{
@@ -305,6 +306,9 @@ pxlCore_DynamicItem.prototype =
 			}
 		}
 
+		var num_custom_saving_columns = custom_saving_columns.length,
+			have_custom_saving_columns = (num_custom_saving_columns > 0);
+
 		inst.item.$form.form
 		(
 			validation_rules,
@@ -317,6 +321,7 @@ pxlCore_DynamicItem.prototype =
 					inst.item.$loader.addClass('active');
 
 					var post_data = inst.item.$form.find(':input').serialize();
+					post_data += '&have_custom_saving_columns=' + (have_custom_saving_columns === true ? 'yes' : 'no');
 
 					inst.$pxl.ajax.post
 					(
@@ -325,6 +330,7 @@ pxlCore_DynamicItem.prototype =
 						{
 							success: function(result)
 							{
+								var saved_id = (dynamic_item.item_id_to_edit !== null ? dynamic_item.item_id_to_edit : result.data.added_item_id);
 							},
 							error: function()
 							{
