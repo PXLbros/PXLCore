@@ -43,9 +43,7 @@ pxlCore_DynamicItem.prototype =
 		$tabs: null,
 
 		save_button_selector: '#dynamic-item-save-button',
-		$save_button: null,
-
-		types_with_custom_saving: ['image'],
+		$save_button: null
 	},
 
 	init: function($pxl)
@@ -318,6 +316,7 @@ pxlCore_DynamicItem.prototype =
 				{
 					inst.item.$save_button.prop('disabled', true);
 
+					inst.setItemLoaderText((dynamic_item.item_id_to_edit !== null ? 'Saving' : 'Adding') + ' ' + dynamic_item.config.identifier + '...');
 					inst.item.$loader.addClass('active');
 
 					var post_data = inst.item.$form.find(':input').serialize();
@@ -331,6 +330,8 @@ pxlCore_DynamicItem.prototype =
 							success: function(result)
 							{
 								var saved_id = (dynamic_item.item_id_to_edit !== null ? dynamic_item.item_id_to_edit : result.data.added_item_id);
+
+								inst.setItemLoaderText(inst.$pxl.ucfirst(dynamic_item.config.identifier) + ' ' + (dynamic_item.item_id_to_edit === null ? 'added' : 'saved') + '!');
 							},
 							error: function()
 							{
@@ -343,5 +344,10 @@ pxlCore_DynamicItem.prototype =
 				}
 			}
 		);
+	},
+
+	setItemLoaderText: function(text)
+	{
+		this.item.$loader_text.html(text);
 	}
 };

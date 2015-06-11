@@ -5,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.65',
+	version: '1.0.66',
 
 	options:
 	{
@@ -241,5 +241,15 @@ pxlCore.prototype =
 			left_position = ($(window).width() / 2) - (width / 2);
 
 		window.open(url, 'pxl-popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,top=' + top_position + ',left=' + left_position + ',width=' + width + ',height=' + height);
+	},
+
+	ucfirst: function(str)
+	{
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	},
+
+	lcfirst: function(str)
+	{
+		return str.charAt(0).toLowerCase() + str.slice(1);
 	}
 };
