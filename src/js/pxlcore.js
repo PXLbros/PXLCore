@@ -5,7 +5,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.66',
+	version: '1.0.67',
 
 	options:
 	{
@@ -64,7 +64,12 @@ pxlCore.prototype =
 		self.modal = new pxlCore_Modal(self);
 
 		// Notification
-		self.notification = new pxlCore_Notification(self);
+		if ( !self.inArray('Notiny', self.options.notification.engines) )
+		{
+			self.options.notification.engines.push('Notiny');
+		}
+
+		self.notification = new pxlCore_Notification(self, 'Notiny');
 
 		if ( self.framework !== null && typeof pxl_notification === 'object' )
 		{

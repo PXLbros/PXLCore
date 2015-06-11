@@ -3,11 +3,11 @@
  * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
-function pxlCore_Notification($pxl)
+function pxlCore_Notification($pxl, default_engine_id)
 {
 	this.$pxl = $pxl;
 
-	this.init();
+	this.init(default_engine_id);
 }
 
 pxlCore_Notification.prototype =
@@ -20,7 +20,7 @@ pxlCore_Notification.prototype =
      * Initialize pxlCore/Notification.
      * @param {string} $pxl - pxlCore object reference.
      */
-	init: function()
+	init: function(default_engine_id)
 	{
 		var self = this;
 
@@ -53,6 +53,11 @@ pxlCore_Notification.prototype =
 			{
 				self.default_engine_id = engine_id;
 			}
+		}
+
+		if ( self.$pxl.isDefined(default_engine_id) )
+		{
+			self.default_engine_id = default_engine_id;
 		}
 
 		var num_loaded_engines = self.$pxl.getObjectSize(self.engines);

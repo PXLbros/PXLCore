@@ -43,9 +43,7 @@ pxlCore_DynamicItem.prototype =
 		$tabs: null,
 
 		save_button_selector: '#dynamic-item-save-button',
-		$save_button: null,
-
-		types_with_custom_saving: ['image'],
+		$save_button: null
 	},
 
 	init: function($pxl)
@@ -318,6 +316,7 @@ pxlCore_DynamicItem.prototype =
 				{
 					inst.item.$save_button.prop('disabled', true);
 
+					inst.setItemLoaderText((dynamic_item.item_id_to_edit !== null ? 'Saving' : 'Adding') + ' ' + dynamic_item.config.identifier + '...');
 					inst.item.$loader.addClass('active');
 
 					var post_data = inst.item.$form.find(':input').serialize();
@@ -331,6 +330,8 @@ pxlCore_DynamicItem.prototype =
 							success: function(result)
 							{
 								var saved_id = (dynamic_item.item_id_to_edit !== null ? dynamic_item.item_id_to_edit : result.data.added_item_id);
+
+								inst.setItemLoaderText(inst.$pxl.ucfirst(dynamic_item.config.identifier) + ' ' + (dynamic_item.item_id_to_edit === null ? 'added' : 'saved') + '!');
 							},
 							error: function()
 							{
@@ -343,6 +344,11 @@ pxlCore_DynamicItem.prototype =
 				}
 			}
 		);
+	},
+
+	setItemLoaderText: function(text)
+	{
+		this.item.$loader_text.html(text);
 	}
 };
 /**
@@ -501,11 +507,11 @@ pxlCore_Notification_Engine_Notiny.prototype =
  * @param {string} $pxl - pxlCore object reference.
  * @constructor
  */
-function pxlCore_Notification($pxl)
+function pxlCore_Notification($pxl, default_engine_id)
 {
 	this.$pxl = $pxl;
 
-	this.init();
+	this.init(default_engine_id);
 }
 
 pxlCore_Notification.prototype =
@@ -518,7 +524,7 @@ pxlCore_Notification.prototype =
      * Initialize pxlCore/Notification.
      * @param {string} $pxl - pxlCore object reference.
      */
-	init: function()
+	init: function(default_engine_id)
 	{
 		var self = this;
 
@@ -551,6 +557,11 @@ pxlCore_Notification.prototype =
 			{
 				self.default_engine_id = engine_id;
 			}
+		}
+
+		if ( self.$pxl.isDefined(default_engine_id) )
+		{
+			self.default_engine_id = default_engine_id;
 		}
 
 		var num_loaded_engines = self.$pxl.getObjectSize(self.engines);
@@ -2076,7 +2087,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.65',
+	version: '1.0.67',
 
 	options:
 	{
@@ -2135,7 +2146,12 @@ pxlCore.prototype =
 		self.modal = new pxlCore_Modal(self);
 
 		// Notification
-		self.notification = new pxlCore_Notification(self);
+		if ( !self.inArray('Notiny', self.options.notification.engines) )
+		{
+			self.options.notification.engines.push('Notiny');
+		}
+
+		self.notification = new pxlCore_Notification(self, 'Notiny');
 
 		if ( self.framework !== null && typeof pxl_notification === 'object' )
 		{
@@ -2312,5 +2328,15 @@ pxlCore.prototype =
 			left_position = ($(window).width() / 2) - (width / 2);
 
 		window.open(url, 'pxl-popup', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,top=' + top_position + ',left=' + left_position + ',width=' + width + ',height=' + height);
+	},
+
+	ucfirst: function(str)
+	{
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	},
+
+	lcfirst: function(str)
+	{
+		return str.charAt(0).toLowerCase() + str.slice(1);
 	}
 };
