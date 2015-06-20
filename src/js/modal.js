@@ -416,6 +416,7 @@ pxlCore_Modal.prototype =
 		// Create modal DOM
 		var $modal_overlay = document.createElement('div');
 		$modal_overlay.className = 'pxl-modal-overlay';
+		$modal_overlay.style.background = 'rgba(0, 0, 0, .3)';
 
 		var $modal = document.createElement('div');
 		$modal.className = 'pxl-modal';
