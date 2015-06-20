@@ -182,6 +182,7 @@ pxlCore_Modal.prototype =
 				_modal.showLoader(_modal.options.loadingText);
 
 				document.body.appendChild(_modal.$modal_overlay);
+				_modal.$modal_overlay.classList.add('open');
 
 				_modal.$modal.classList.add('open');
 				document.body.appendChild(_modal.$modal);
@@ -268,6 +269,8 @@ pxlCore_Modal.prototype =
 
 				_modal.$modal.classList.add('close');
 				_modal.$modal.classList.remove('open');
+
+				_modal.$modal_overlay.classList.remove('open');
 
 				// $pxl.ui.onAnimationComplete(_modal.selector, function()
 				$(_modal.selector).one('webkitAnimationEnd oanimationend msAnimationEnd animationend', function()
