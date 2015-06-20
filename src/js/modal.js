@@ -70,6 +70,7 @@ pxlCore_Modal.prototype =
 		{
 			id: modal_id,
 			selector: '#pxl-modal-' + modal_id,
+			$modal_overlay: null,
 			$modal: null,
 			$loader: null,
 			$loader_text: null,
@@ -179,6 +180,8 @@ pxlCore_Modal.prototype =
 				var _modal = this;
 
 				_modal.showLoader(_modal.options.loadingText);
+
+				document.body.appendChild(_modal.$modal_overlay);
 
 				_modal.$modal.classList.add('open');
 				document.body.appendChild(_modal.$modal);
@@ -411,6 +414,9 @@ pxlCore_Modal.prototype =
 		modal.$buttons_container.appendChild(modal.$buttons);
 
 		// Create modal DOM
+		var $modal_overlay = document.createElement('div');
+		$modal_overlay.className = 'pxl-modal-overlay';
+
 		var $modal = document.createElement('div');
 		$modal.className = 'pxl-modal';
 		$modal.setAttribute('id', 'pxl-modal-' + modal.id);
@@ -428,6 +434,7 @@ pxlCore_Modal.prototype =
 
 		modal.default_line_height = modal.$content.style.lineHeight;
 
+		modal.$modal_overlay = $modal_overlay;
 		modal.$modal = $modal;
 
 		self.modals[modal.id] = modal;
