@@ -573,6 +573,7 @@
   height: 100%;
   top: 0;
   left: 0;
+  z-index: 1001;
 }
 
 .pxl-modal {
@@ -580,7 +581,7 @@
   top: 50%;
   left: 50%;
   background-color: #FFF;
-  z-index: 1001;
+  z-index: 1002;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   -webkit-box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
