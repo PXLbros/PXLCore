@@ -1,6 +1,6 @@
 {
   "name": "pxlCore",
-  "version": "1.0.67",
+  "version": "1.0.68",
   "homepage": "https://github.com/PXLbros/pxlCore",
   "main": "pxlcore.js",
   "ignore":
@@ -14,7 +14,7 @@
   {
     "jquery": "latest",
     "jquery-legacy": "jquery#1",
-    "normalize-css": "latest",
+    "normalize-css": "latest",-am
     "sass-mediaqueries": "latest",
     "sass-mixins": "latest"
   }
