@@ -1328,7 +1328,12 @@ pxlCore_Ajax_Request.prototype =
 
 		var file_upload = (inst.$pxl.isDefined(inst.file_upload) && inst.file_upload === true);
 
-		var headers = { 'X-XSRF-TOKEN': inst.$pxl.framework.csrf_token };
+		var headers = {};
+
+		if ( inst.$pxl.framework !== null )
+		{
+			headers['X-XSRF-TOKEN'] = inst.$pxl.framework.csrf_token;
+		}
 
 		if ( file_upload === true && inst.$pxl.isObject(inst.file_upload_data) )
 		{
@@ -2098,7 +2103,7 @@ function pxlCore(options)
 
 pxlCore.prototype =
 {
-	version: '1.0.72',
+	version: '1.0.73',
 
 	options:
 	{
